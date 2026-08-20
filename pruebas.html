@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BiblioSystem - Panel de Pruebas General</title>
+    <style>
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f4f6f9;
+        margin: 0;
+        padding: 0;
+      }
+
+      .topbar {
+        background-color: #2c3e50;
+        color: white;
+        padding: 15px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .topbar h1 {
+        margin: 0;
+        font-size: 22px;
+      }
+
+      .container {
+        padding: 20px;
+        max-width: 1200px;
+        margin: auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 20px;
+      }
+
+      .card {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      h2 {
+        margin-top: 0;
+        color: #2c3e50;
+        border-bottom: 2px solid #3498db;
+        padding-bottom: 8px;
+        font-size: 18px;
+        margin-bottom: 15px;
+      }
+
+      .form-group {
+        margin-bottom: 12px;
+      }
+
+      label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 4px;
+        color: #555;
+        font-size: 13px;
+      }
+
+      input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccd0d5;
+        border-radius: 4px;
+        box-sizing: border-box;
+        font-size: 13px;
+      }
+
+      button {
+        width: 100%;
+        padding: 10px;
+        background-color: #3498db;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 8px;
+      }
+
+      button:hover {
+        background-color: #2980b9;
+      }
+
+      .btn-get {
+        background-color: #27ae60;
+      }
+
+      .btn-get:hover {
+        background-color: #219653;
+      }
+
+      pre {
+        background: #1e1e1e;
+        color: #00ffcc;
+        padding: 10px;
+        font-size: 11px;
+        margin-top: 10px;
+        max-height: 150px;
+        overflow: auto;
+        border-radius: 4px;
+      }
+
+    </style>
+  </head>
+
+  <body>
+
+    <header class="topbar">
+      <h1>📚 BiblioSystem - Panel de Pruebas General</h1>
+      <span>Panel General</span>
+    </header>
+
+    <div class="container">
+
+      <!-- 1. Consultar Usuarios (GET) -->
+      <div class="card">
+        <h2>1. Consultar Usuarios (GET)</h2>
+        <p style="font-size: 13px; color: #666;">Muestra todos los usuarios registrados.</p>
+        <button type="button" class="btn-get" onclick="consultarAPI('api/get_usuarios.php', 'resultado-usuarios')">Ver Todos los Usuarios</button>
+        <pre id="resultado-usuarios">Haz clic en el botón para consultar...</pre>
+      </div>
+
+      <!-- 2. Consultar Libros (GET) -->
+      <div class="card">
+        <h2>2. Consultar Libros (GET)</h2>
+        <p style="font-size: 13px; color: #666;">Muestra el listado completo de libros.</p>
+        <button type="button" class="btn-get" onclick="consultarAPI('api/get_libros.php', 'resultado-libros')">Ver Todos los Libros</button>
+        <pre id="resultado-libros">Haz clic en el botón para consultar...</pre>
+      </div>
+
+      <!-- 3. Consultar Préstamos (GET) -->
+      <div class="card">
+        <h2>3. Consultar Préstamos (GET)</h2>
+        <p style="font-size: 13px; color: #666;">Muestra el listado completo de préstamos.</p>
+        <button type="button" class="btn-get" onclick="consultarAPI('api/get_prestamos.php', 'resultado-prestamos')">Ver Todos los Préstamos</button>
+        <pre id="resultado-prestamos">Haz clic en el botón para consultar...</pre>
+      </div>
+
+      <!-- 4. Registrar Usuario (POST) -->
+      <div class="card">
+        <h2>4. Registrar Usuario (POST)</h2>
+        <form action="api/registrar_usuario.php" method="POST" target="_blank">
+          <div class="form-group"><label>Cédula:</label><input type="text" name="cedula" value="0944234467" required></div>
+          <div class="form-group"><label>Nombres:</label><input type="text" name="nombres" value="Jeremy" required></div>
+          <div class="form-group"><label>Apellidos:</label><input type="text" name="apellidos" value="Lopez" required></div>
+          <div class="form-group"><label>Correo:</label><input type="email" name="correo" value="jeremy@email.com" required></div>
+          <div class="form-group"><label>Teléfono:</label><input type="text" name="telefono" value="0991063391"></div>
+          <div class="form-group"><label>Dirección:</label><input type="text" name="direccion" value="Guayaquil"></div>
+          <button type="submit">Guardar Usuario</button>
+        </form>
+      </div>
+
+      <!-- 5. Registrar Libro (POST) -->
+      <div class="card">
+        <h2>5. Registrar Libro (POST)</h2>
+        <form action="api/registrar_libro.php" method="POST" target="_blank">
+          <div class="form-group"><label>Código:</label><input type="text" name="codigo" value="LIB-003" required></div>
+          <div class="form-group"><label>Título:</label><input type="text" name="titulo" value="Arquitectura Moderna" required></div>
+          <div class="form-group"><label>Autor (ID):</label><input type="text" name="autor" value="1" required></div>
+          <div class="form-group"><label>Categoría (ID):</label><input type="text" name="categoria" value="1" required></div>
+          <div class="form-group"><label>Cantidad Disponible:</label><input type="number" name="cantidad_disponible" value="5" required></div>
+          <button type="submit">Guardar Libro</button>
+        </form>
+      </div>
+
+      <!-- 6. Registrar Préstamo (POST) -->
+      <div class="card">
+        <h2>6. Registrar Préstamo (POST)</h2>
+        <form action="api/registrar_prestamo.php" method="POST" target="_blank">
+          <div class="form-group"><label>Cédula Usuario:</label><input type="text" name="cedula_usuario" value="0944234467" required></div>
+          <div class="form-group"><label>Código Libro:</label><input type="text" name="codigo_libro" value="LIB-003" required></div>
+          <div class="form-group"><label>Fecha Límite:</label><input type="date" name="fecha_limite" required></div>
+          <button type="submit">Confirmar Préstamo</button>
+        </form>
+      </div>
+
+    </div>
+
+    <script>
+      function consultarAPI(url, idContenedor) {
+            const contenedor = document.getElementById(idContenedor);
+            contenedor.textContent = "Cargando...";
+            
+            fetch(url)
+                .then(response => {
+                    return response.text().then(text => {
+                        try {
+                            let json = JSON.parse(text);
+                            contenedor.textContent = JSON.stringify(json, null, 2);
+                        } catch (e) {
+                            contenedor.textContent = `[Status ${response.status}] Respuesta:\n\n` + text;
+                        }
+                    });
+                })
+                .catch(error => {
+                    contenedor.textContent = "Error de red: " + error.message;
+                });
+        }
+    </script>
+  </body>
+
+</html>
