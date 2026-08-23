@@ -1,52 +1,23 @@
 <?php
-// ============================================================
-// INICIO APORTE JEREMY LÓPEZ
-// ============================================================
-// api/registrar_usuario.php
-header('Content-Type: application/json');
-require_once '../config/database.php';
+require_once __DIR__ . '/helpers.php';
+exigir_post();
+require_once __DIR__ . '/../config/database.php';
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    
-    $cedula = $_POST['cedula'] ?? '';
-    $nombres = $_POST['nombres'] ?? '';
-    $apellidos = $_POST['apellidos'] ?? '';
-    $correo = $_POST['correo'] ?? '';
-    $telefono = $_POST['telefono'] ?? '';
-    $direccion = $_POST['direccion'] ?? '';
+try {
+    $cedula = dato('cedula');
+    $nombres = dato('nombres');
+    $apellidos = dato('apellidos');
+    $correo = dato('correo');
 
-    // Validación básica de campos vacíos
-    if (empty($cedula) || empty($nombres) || empty($apellidos) || empty($correo)) {
-        echo json_encode(["success" => false, "message" => "Cédula, nombres, apellidos y correo son obligatorios."]);
-        exit;
+    if (!$cedula || !$nombres || !$apellidos || !filter_var($correo, FILTER_VALIDATE_EMAIL)) {
+        throw new Exception('Ingresa cédula, nombres, apellidos y un correo electrónico válido.');
     }
 
-    try {
-        $query = "INSERT INTO usuarios (cedula, nombres, apellidos, correo, telefono, direccion) 
-                  VALUES (:cedula, :nombres, :apellidos, :correo, :telefono, :direccion)";
-        
-        $stmt = $conexion->prepare($query);
-        
-        // Ejecutamos pasando el arreglo de datos directamente
-        $stmt->execute([
-            ':cedula' => $cedula,
-            ':nombres' => $nombres,
-            ':apellidos' => $apellidos,
-            ':correo' => $correo,
-            ':telefono' => $telefono,
-            ':direccion' => $direccion
-        ]);
-        
-        echo json_encode(["success" => true, "message" => "Usuario registrado exitosamente."]);
-        
-    } catch (PDOException $e) {
-        // Si la cédula o el correo ya existen (asumiendo que en tu BD los pusiste como UNIQUE)
-        echo json_encode(["success" => false, "message" => "Error al registrar: " . $e->getMessage()]);
-    }
-} else {
-    echo json_encode(["success" => false, "message" => "Método no permitido. Use POST."]);
+    $sql = 'INSERT INTO usuarios (cedula, nombres, apellidos, correo, telefono, direccion) VALUES (?, ?, ?, ?, ?, ?)';
+    $conexion->prepare($sql)->execute([$cedula, $nombres, $apellidos, $correo, dato('telefono') ?: null, dato('direccion') ?: null]);
+    $id = (int) $conexion->lastInsertId();
+    registrar_bitacora($conexion, 'REGISTRAR USUARIO', 'Se registró el lector ' . $nombres . ' ' . $apellidos, 'usuarios', $id);
+    responder(['success' => true, 'message' => 'Lector registrado exitosamente.', 'id' => $id]);
+} catch (Throwable $error) {
+    responder(['success' => false, 'message' => mensaje_error($error)], 400);
 }
-// ============================================================
-// FIN APORTE JEREMY LÓPEZ
-// ============================================================
-?>
