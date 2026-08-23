@@ -15,7 +15,7 @@ try {
         throw new Exception('Completa el código, título, autor, categoría y cantidad de ejemplares.');
     }
 
-    $consulta = $conexion->prepare('SELECT cantidad_total, cantidad_disponible FROM libros WHERE id_libro = ?');
+    $consulta = $conexion->prepare('SELECT cantidad_total, cantidad_disponible, imagen FROM libros WHERE id_libro = ?');
     $consulta->execute([$id]);
     $actual = $consulta->fetch(PDO::FETCH_ASSOC);
     if (!$actual) {
@@ -27,8 +27,9 @@ try {
         throw new Exception('La cantidad total no puede ser menor al número de ejemplares prestados.');
     }
 
-    $sql = 'UPDATE libros SET codigo = ?, titulo = ?, id_autor = ?, id_categoria = ?, editorial = ?, anio_publicacion = ?, isbn = ?, cantidad_total = ?, cantidad_disponible = ?, descripcion = ? WHERE id_libro = ?';
-    $conexion->prepare($sql)->execute([$codigo, $titulo, $autor, $categoria, dato('editorial') ?: null, dato('anio_publicacion') ?: null, dato('isbn') ?: null, $cantidad_total, $cantidad_total - $prestados, dato('descripcion') ?: null, $id]);
+    $imagen = procesar_portada($actual['imagen']);
+    $sql = 'UPDATE libros SET codigo = ?, titulo = ?, id_autor = ?, id_categoria = ?, editorial = ?, anio_publicacion = ?, isbn = ?, cantidad_total = ?, cantidad_disponible = ?, descripcion = ?, imagen = ? WHERE id_libro = ?';
+    $conexion->prepare($sql)->execute([$codigo, $titulo, $autor, $categoria, dato('editorial') ?: null, dato('anio_publicacion') ?: null, dato('isbn') ?: null, $cantidad_total, $cantidad_total - $prestados, dato('descripcion') ?: null, $imagen, $id]);
     registrar_bitacora($conexion, 'ACTUALIZAR LIBRO', 'Se actualizó el libro ' . $titulo, 'libros', $id);
     responder(['success' => true, 'message' => 'Libro actualizado correctamente.']);
 } catch (Throwable $error) {
