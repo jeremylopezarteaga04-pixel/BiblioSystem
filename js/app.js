@@ -37,8 +37,8 @@ async function request(endpoint, options = {}) {
 }
 
 async function submit(endpoint, values) {
-  const body = new FormData();
-  Object.entries(values).forEach(([key, value]) => body.append(key, value ?? ''));
+  const body = values instanceof FormData ? values : new FormData();
+  if (!(values instanceof FormData)) Object.entries(values).forEach(([key, value]) => body.append(key, value ?? ''));
   return request(endpoint, { method: 'POST', body });
 }
 
@@ -72,7 +72,7 @@ async function loadData(showMessage = false) {
     renderAll();
     if (showMessage) toast('Información actualizada correctamente.');
   } catch (error) {
-    notice.innerHTML = `<strong>No se pudo conectar con la base de datos.</strong> ${escapeHtml(error.message)} Verifica <strong>config/database.php</strong>, importa el SQL y ejecuta el proyecto con un servidor PHP.`;
+    notice.innerHTML = `<strong>No se pudo conectar con la base de datos.</strong> ${escapeHtml(error.message)} Verifica que exista <strong>database/bibliosystem.sqlite</strong> y ejecuta el proyecto con <strong>php -S 0.0.0.0:8000</strong>.`;
     notice.classList.remove('hidden');
     renderAll();
     if (showMessage) toast(error.message, true);
@@ -162,7 +162,8 @@ function renderCharts() {
 
 function bookCard(book, index) {
   const available = Number(book.cantidad_disponible || 0);
-  return `<article class="book-card"><div class="book-cover cover-${index % 6}"><strong>${escapeHtml(book.titulo)}</strong></div><div class="book-content"><span class="book-category">${escapeHtml(book.categoria_nombre || 'Sin categoría')}</span><h3>${escapeHtml(book.titulo)}</h3><p class="book-author">${escapeHtml(book.autor_nombre || 'Autor no registrado')}</p><p class="book-code">${escapeHtml(book.codigo)}${book.editorial ? ` · ${escapeHtml(book.editorial)}` : ''}</p><div class="book-footer"><span class="availability${available ? '' : ' empty'}">${available ? `${available} disponibles` : 'Sin ejemplares'}</span><div class="card-actions"><button class="mini-button" data-action="edit-book" data-id="${book.id_libro}" title="Editar libro">✎</button><button class="mini-button" data-action="delete-book" data-id="${book.id_libro}" title="Eliminar libro">×</button></div></div></div></article>`;
+  const image = book.imagen ? `<img class="book-cover-image" src="${escapeHtml(book.imagen)}" alt="Portada de ${escapeHtml(book.titulo)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><strong class="book-cover-fallback" style="display:none">${escapeHtml(book.titulo)}</strong>` : `<strong>${escapeHtml(book.titulo)}</strong>`;
+  return `<article class="book-card"><div class="book-cover cover-${index % 6}${book.imagen ? ' has-image' : ''}">${image}</div><div class="book-content"><span class="book-category">${escapeHtml(book.categoria_nombre || 'Sin categoría')}</span><h3>${escapeHtml(book.titulo)}</h3><p class="book-author">${escapeHtml(book.autor_nombre || 'Autor no registrado')}</p><p class="book-code">${escapeHtml(book.codigo)}${book.editorial ? ` · ${escapeHtml(book.editorial)}` : ''}</p><div class="book-footer"><span class="availability${available ? '' : ' empty'}">${available ? `${available} disponibles` : 'Sin ejemplares'}</span><div class="card-actions"><button class="mini-button" data-action="edit-book" data-id="${book.id_libro}" title="Editar libro">✎</button><button class="mini-button" data-action="delete-book" data-id="${book.id_libro}" title="Eliminar libro">×</button></div></div></div></article>`;
 }
 
 function renderBooks() {
@@ -234,7 +235,7 @@ function field(name, label, options = {}) {
   let control;
   if (options.type === 'select') control = `<select id="field-${name}" name="${name}"${required}><option value="">Selecciona una opción</option>${(options.options || []).map((option) => `<option value="${escapeHtml(option.value)}"${String(option.value) === String(options.value) ? ' selected' : ''}>${escapeHtml(option.label)}</option>`).join('')}</select>`;
   else if (options.type === 'textarea') control = `<textarea id="field-${name}" name="${name}" placeholder="${escapeHtml(options.placeholder || '')}"${required}>${value}</textarea>`;
-  else control = `<input id="field-${name}" type="${escapeHtml(options.type || 'text')}" name="${name}" value="${value}" placeholder="${escapeHtml(options.placeholder || '')}"${options.min !== undefined ? ` min="${options.min}"` : ''}${required}>`;
+  else control = `<input id="field-${name}" type="${escapeHtml(options.type || 'text')}" name="${name}"${options.type === 'file' ? '' : ` value="${value}"`} placeholder="${escapeHtml(options.placeholder || '')}"${options.min !== undefined ? ` min="${options.min}"` : ''}${options.accept ? ` accept="${escapeHtml(options.accept)}"` : ''}${required}>`;
   return `<div class="field${full}"><label for="field-${name}">${escapeHtml(label)}${options.required ? ' *' : ''}</label>${control}</div>`;
 }
 
@@ -243,7 +244,8 @@ function openModal(type, record = null) {
   let title = ''; let eyebrow = ''; let html = '';
   if (type === 'book') {
     title = record ? 'Editar libro' : 'Registrar nuevo libro'; eyebrow = 'CATÁLOGO BIBLIOGRÁFICO';
-    html = field('codigo', 'Código del libro', { value: record?.codigo, placeholder: 'LIB-009', required: true }) + field('titulo', 'Título', { value: record?.titulo, required: true }) + field('id_autor', 'Autor', { type: 'select', value: record?.id_autor, options: state.authors.map((author) => ({ value: author.id_autor, label: author.nombre })), required: true }) + field('id_categoria', 'Categoría', { type: 'select', value: record?.id_categoria, options: state.categories.map((category) => ({ value: category.id_categoria, label: category.nombre })), required: true }) + field('editorial', 'Editorial', { value: record?.editorial }) + field('anio_publicacion', 'Año de publicación', { type: 'number', value: record?.anio_publicacion, min: 1000 }) + field('isbn', 'ISBN', { value: record?.isbn }) + field('cantidad_total', 'Cantidad de ejemplares', { type: 'number', value: record?.cantidad_total || record?.cantidad_disponible || 1, min: 1, required: true }) + field('descripcion', 'Descripción', { type: 'textarea', value: record?.descripcion, full: true });
+    const externalImage = record?.imagen && /^https?:\/\//i.test(record.imagen) ? record.imagen : '';
+    html = field('codigo', 'Código del libro', { value: record?.codigo, placeholder: 'LIB-001', required: true }) + field('titulo', 'Título', { value: record?.titulo, required: true }) + field('id_autor', 'Autor', { type: 'select', value: record?.id_autor, options: state.authors.map((author) => ({ value: author.id_autor, label: author.nombre })), required: true }) + field('id_categoria', 'Categoría', { type: 'select', value: record?.id_categoria, options: state.categories.map((category) => ({ value: category.id_categoria, label: category.nombre })), required: true }) + field('editorial', 'Editorial', { value: record?.editorial }) + field('anio_publicacion', 'Año de publicación', { type: 'number', value: record?.anio_publicacion, min: 1000 }) + field('isbn', 'ISBN', { value: record?.isbn }) + field('cantidad_total', 'Cantidad de ejemplares', { type: 'number', value: record?.cantidad_total || record?.cantidad_disponible || 1, min: 1, required: true }) + `<div class="cover-upload-section"><span class="cover-upload-title">Portada del libro</span><p class="cover-upload-help">Sube una imagen desde tu computadora o pega una URL. Si eliges ambas, se utilizará la imagen subida.</p></div>` + field('imagen_archivo', 'Subir imagen desde tu computadora', { type: 'file', accept: 'image/jpeg,image/png,image/webp,image/gif', full: true }) + field('imagen_url', 'O pegar URL de la portada', { type: 'url', value: externalImage, placeholder: 'https://ejemplo.com/portada.jpg', full: true }) + `<div id="cover-preview" class="cover-preview${record?.imagen ? '' : ' hidden'}">${record?.imagen ? `<img src="${escapeHtml(record.imagen)}" alt="Vista previa de la portada"><span>Portada actual</span>` : ''}</div>` + field('descripcion', 'Descripción', { type: 'textarea', value: record?.descripcion, full: true });
   } else if (type === 'user') {
     title = record ? 'Editar lector' : 'Registrar nuevo lector'; eyebrow = 'COMUNIDAD LECTORA';
     html = field('cedula', 'Cédula', { value: record?.cedula, required: true }) + field('nombres', 'Nombres', { value: record?.nombres, required: true }) + field('apellidos', 'Apellidos', { value: record?.apellidos, required: true }) + field('correo', 'Correo electrónico', { type: 'email', value: record?.correo, required: true }) + field('telefono', 'Teléfono', { value: record?.telefono }) + field('direccion', 'Dirección', { value: record?.direccion });
@@ -261,7 +263,32 @@ function openModal(type, record = null) {
   $('#modal-title').textContent = title; $('#modal-eyebrow').textContent = eyebrow; $('#modal-fields').innerHTML = html;
   $('#submit-modal').textContent = record ? 'Guardar cambios' : 'Guardar registro';
   $('#modal-backdrop').classList.remove('hidden');
+  if (type === 'book') attachCoverPreview();
   window.setTimeout(() => $('#modal-fields input, #modal-fields select')?.focus(), 50);
+}
+
+function attachCoverPreview() {
+  const preview = $('#cover-preview');
+  const fileInput = $('#field-imagen_archivo');
+  const urlInput = $('#field-imagen_url');
+  if (!preview || !fileInput || !urlInput) return;
+
+  const showPreview = (source, label) => {
+    if (!source) { preview.classList.add('hidden'); preview.innerHTML = ''; return; }
+    preview.innerHTML = `<img src="${escapeHtml(source)}" alt="Vista previa de la portada"><span>${escapeHtml(label)}</span>`;
+    preview.classList.remove('hidden');
+  };
+
+  fileInput.addEventListener('change', () => {
+    const image = fileInput.files?.[0];
+    if (!image) { showPreview(urlInput.value.trim(), 'Portada desde URL'); return; }
+    if (image.size > 5 * 1024 * 1024) { toast('La imagen no puede superar los 5 MB.', true); fileInput.value = ''; return; }
+    showPreview(URL.createObjectURL(image), 'Portada seleccionada desde tu computadora');
+  });
+
+  urlInput.addEventListener('input', () => {
+    if (!fileInput.files?.length) showPreview(urlInput.value.trim(), 'Portada desde URL');
+  });
 }
 
 function closeModal() { $('#modal-backdrop').classList.add('hidden'); state.modal = null; $('#modal-form').reset(); }
@@ -271,11 +298,11 @@ async function handleSubmit(event) {
   if (!state.modal) return;
   const button = $('#submit-modal'); button.disabled = true; button.textContent = 'Guardando...';
   try {
-    const values = Object.fromEntries(new FormData(event.currentTarget).entries());
+    const values = new FormData(event.currentTarget);
     const { type, record } = state.modal;
     const endpoints = { book: record ? 'actualizar_libro.php' : 'registrar_libro.php', user: record ? 'actualizar_usuario.php' : 'registrar_usuario.php', loan: 'registrar_prestamo.php', category: 'registrar_categoria.php', author: 'registrar_autor.php' };
-    if (record && type === 'book') values.id_libro = record.id_libro;
-    if (record && type === 'user') values.id_usuario = record.id_usuario;
+    if (record && type === 'book') values.append('id_libro', record.id_libro);
+    if (record && type === 'user') values.append('id_usuario', record.id_usuario);
     const response = await submit(endpoints[type], values);
     closeModal(); await loadData(); toast(response.message || 'Registro guardado correctamente.');
   } catch (error) { toast(error.message, true); } finally { button.disabled = false; button.textContent = 'Guardar registro'; }
