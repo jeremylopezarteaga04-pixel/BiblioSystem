@@ -24,7 +24,7 @@ try {
         throw new Exception('El lector seleccionado no existe o no está activo.');
     }
 
-    $consulta_libro = $conexion->prepare("SELECT id_libro, titulo, cantidad_disponible FROM libros WHERE codigo = ? AND estado = 'ACTIVO' FOR UPDATE");
+    $consulta_libro = $conexion->prepare("SELECT id_libro, titulo, cantidad_disponible FROM libros WHERE codigo = ? AND estado = 'ACTIVO'");
     $consulta_libro->execute([$codigo]);
     $libro = $consulta_libro->fetch(PDO::FETCH_ASSOC);
     if (!$libro) {
@@ -34,7 +34,7 @@ try {
         throw new Exception('No hay ejemplares disponibles para prestar este libro.');
     }
 
-    $sql = "INSERT INTO prestamos (id_usuario, id_libro, fecha_prestamo, fecha_devolucion_programada, estado, observacion, fecha_registro) VALUES (?, ?, CURDATE(), ?, 'ACTIVO', ?, NOW())";
+    $sql = "INSERT INTO prestamos (id_usuario, id_libro, fecha_prestamo, fecha_devolucion_programada, estado, observacion, fecha_registro) VALUES (?, ?, date('now', 'localtime'), ?, 'ACTIVO', ?, CURRENT_TIMESTAMP)";
     $conexion->prepare($sql)->execute([$usuario['id_usuario'], $libro['id_libro'], $fecha_limite, dato('observacion') ?: null]);
     $id = (int) $conexion->lastInsertId();
     $conexion->prepare('UPDATE libros SET cantidad_disponible = cantidad_disponible - 1 WHERE id_libro = ?')->execute([$libro['id_libro']]);
