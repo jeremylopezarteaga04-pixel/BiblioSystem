@@ -1,33 +1,12 @@
 <?php
-// ============================================================
-// INICIO APORTE MARIO CUEVA
-// ============================================================
-// api/obtener_prestamos.php
-header('Content-Type: application/json; charset=utf-8');
+require_once __DIR__ . '/helpers.php';
 require_once __DIR__ . '/../config/database.php';
 
 try {
-    // Consulta para traer los préstamos con información legible del usuario y del libro si es posible
-    $sql = "SELECT p.*, u.nombres, u.apellidos, u.cedula, l.titulo AS titulo_libro, l.codigo AS codigo_libro 
-            FROM prestamos p
-            LEFT JOIN usuarios u ON p.id_usuario = u.id_usuario
-            LEFT JOIN libros l ON p.id_libro = l.id_libro";
-            
-    $stmt = $conexion->query($sql);
-    $prestamos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    echo json_encode([
-        "success" => true,
-        "data" => $prestamos
-    ], JSON_UNESCAPED_UNICODE);
-
-} catch (Exception $e) {
-    echo json_encode([
-        "success" => false,
-        "message" => $e->getMessage()
-    ]);
+    $conexion->exec("UPDATE prestamos SET estado = 'ATRASADO' WHERE estado = 'ACTIVO' AND fecha_devolucion_programada < CURDATE()");
+    $sql = 'SELECT p.*, u.nombres, u.apellidos, u.cedula, u.correo, l.titulo AS titulo_libro, l.codigo AS codigo_libro FROM prestamos p LEFT JOIN usuarios u ON p.id_usuario = u.id_usuario LEFT JOIN libros l ON p.id_libro = l.id_libro ORDER BY p.fecha_registro DESC, p.id_prestamo DESC';
+    $consulta = $conexion->query($sql);
+    responder(['success' => true, 'data' => $consulta->fetchAll(PDO::FETCH_ASSOC)]);
+} catch (Throwable $error) {
+    responder(['success' => false, 'message' => mensaje_error($error)], 500);
 }
-// ============================================================
-// FIN APORTE MARIO CUEVA
-// ============================================================
-?>
