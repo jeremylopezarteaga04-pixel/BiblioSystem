@@ -1,53 +1,24 @@
 <?php
-// ============================================================
-// INICIO APORTE ELOY ROJAS
-// ============================================================
-// api/registrar_libro.php
-header('Content-Type: application/json; charset=utf-8');
+require_once __DIR__ . '/helpers.php';
+exigir_post();
 require_once __DIR__ . '/../config/database.php';
 
 try {
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        throw new Exception("Método no permitido");
+    $codigo = dato('codigo') ?: dato('isbn');
+    $titulo = dato('titulo');
+    $autor = (int) (dato('id_autor') ?: dato('autor'));
+    $categoria = (int) (dato('id_categoria') ?: dato('categoria'));
+    $cantidad = (int) (dato('cantidad_total') ?: dato('cantidad_disponible') ?: dato('stock') ?: dato('cantidad'));
+
+    if (!$codigo || !$titulo || !$autor || !$categoria || $cantidad < 1) {
+        throw new Exception('Completa el código, título, autor, categoría y una cantidad válida de ejemplares.');
     }
 
-    // Capturamos las variables aceptando múltiples alternativas por si el input se llama diferente
-    $codigo = $_POST['codigo'] ?? $_POST['isbn'] ?? '';
-    $titulo = $_POST['titulo'] ?? '';
-    $autor = $_POST['autor'] ?? $_POST['id_autor'] ?? '';
-    $categoria = $_POST['categoria'] ?? $_POST['id_categoria'] ?? '';
-    $cantidad = $_POST['cantidad_disponible'] ?? $_POST['stock'] ?? $_POST['cantidad'] ?? '';
-
-    // Validamos que los campos obligatorios vengan llenos
-    if (empty($codigo) || empty($titulo) || empty($autor) || empty($categoria) || $cantidad === '') {
-        throw new Exception("Faltan datos obligatorios. Asegúrate de llenar todos los campos.");
-    }
-
-    // Inserción en la tabla libros (ajustando los nombres reales de tus columnas)
-    $sql = "INSERT INTO libros (codigo, titulo, id_autor, id_categoria, cantidad_disponible, fecha_registro) 
-            VALUES (:codigo, :titulo, :autor, :categoria, :cantidad, NOW())";
-    
-    $stmt = $conexion->prepare($sql);
-    $stmt->execute([
-        ':codigo' => $codigo,
-        ':titulo' => $titulo,
-        ':autor' => $autor,
-        ':categoria' => $categoria,
-        ':cantidad' => $cantidad
-    ]);
-
-    echo json_encode([
-        "success" => true,
-        "message" => "¡Libro registrado exitosamente!"
-    ]);
-
-} catch (Exception $e) {
-    echo json_encode([
-        "success" => false,
-        "message" => $e->getMessage()
-    ]);
+    $sql = 'INSERT INTO libros (codigo, titulo, id_autor, id_categoria, editorial, anio_publicacion, isbn, cantidad_total, cantidad_disponible, descripcion, fecha_registro) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())';
+    $conexion->prepare($sql)->execute([$codigo, $titulo, $autor, $categoria, dato('editorial') ?: null, dato('anio_publicacion') ?: null, dato('isbn') ?: null, $cantidad, $cantidad, dato('descripcion') ?: null]);
+    $id = (int) $conexion->lastInsertId();
+    registrar_bitacora($conexion, 'REGISTRAR LIBRO', 'Se registró el libro ' . $titulo . ' con ' . $cantidad . ' ejemplares', 'libros', $id);
+    responder(['success' => true, 'message' => 'Libro registrado exitosamente.', 'id' => $id]);
+} catch (Throwable $error) {
+    responder(['success' => false, 'message' => mensaje_error($error)], 400);
 }
-// ============================================================
-// FIN APORTE ELOY ROJAS
-// ============================================================
-?>
