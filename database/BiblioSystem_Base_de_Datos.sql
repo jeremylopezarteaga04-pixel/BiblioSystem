@@ -128,4 +128,7 @@ INSERT INTO `usuarios` VALUES ('3', '0934567890', 'Carlos', 'Rodríguez', 'carlo
 INSERT INTO `usuarios` VALUES ('4', '0944234467', 'Jeremy Mike', 'Lopez Arteaga', 'jeloarte@espol.edu.ec', '0991063391', 'AV 43 908B, SO Guayaquil', 'ACTIVO', '2026-08-15 21:08:17');
 INSERT INTO `usuarios` VALUES ('5', '0944234475', 'Isaias Elias', 'Lopez Arteaga', 'isaias08@outlook.com', '0919212415', 'AV 43 908B, SO Guayaquil', 'ACTIVO', '2026-08-15 22:29:10');
 
+-- Corrige registros heredados cuya disponibilidad superaba el total registrado.
+UPDATE `libros` SET `cantidad_total` = GREATEST(`cantidad_total`, `cantidad_disponible`);
+
 SET FOREIGN_KEY_CHECKS=1;
