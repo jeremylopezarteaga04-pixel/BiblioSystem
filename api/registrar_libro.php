@@ -14,8 +14,9 @@ try {
         throw new Exception('Completa el código, título, autor, categoría y una cantidad válida de ejemplares.');
     }
 
-    $sql = 'INSERT INTO libros (codigo, titulo, id_autor, id_categoria, editorial, anio_publicacion, isbn, cantidad_total, cantidad_disponible, descripcion, fecha_registro) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())';
-    $conexion->prepare($sql)->execute([$codigo, $titulo, $autor, $categoria, dato('editorial') ?: null, dato('anio_publicacion') ?: null, dato('isbn') ?: null, $cantidad, $cantidad, dato('descripcion') ?: null]);
+    $imagen = procesar_portada();
+    $sql = 'INSERT INTO libros (codigo, titulo, id_autor, id_categoria, editorial, anio_publicacion, isbn, cantidad_total, cantidad_disponible, descripcion, imagen, fecha_registro) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)';
+    $conexion->prepare($sql)->execute([$codigo, $titulo, $autor, $categoria, dato('editorial') ?: null, dato('anio_publicacion') ?: null, dato('isbn') ?: null, $cantidad, $cantidad, dato('descripcion') ?: null, $imagen]);
     $id = (int) $conexion->lastInsertId();
     registrar_bitacora($conexion, 'REGISTRAR LIBRO', 'Se registró el libro ' . $titulo . ' con ' . $cantidad . ' ejemplares', 'libros', $id);
     responder(['success' => true, 'message' => 'Libro registrado exitosamente.', 'id' => $id]);
