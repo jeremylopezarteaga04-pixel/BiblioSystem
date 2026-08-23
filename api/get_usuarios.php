@@ -1,27 +1,10 @@
 <?php
-// ============================================================
-// INICIO APORTE JEREMY LÓPEZ
-// ============================================================
-// api/obtener_usuarios.php
-header('Content-Type: application/json; charset=utf-8');
+require_once __DIR__ . '/helpers.php';
 require_once __DIR__ . '/../config/database.php';
 
 try {
-    $stmt = $conexion->query("SELECT * FROM usuarios");
-    $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    echo json_encode([
-        "success" => true,
-        "data" => $usuarios
-    ], JSON_UNESCAPED_UNICODE);
-
-} catch (Exception $e) {
-    echo json_encode([
-        "success" => false,
-        "message" => $e->getMessage()
-    ]);
+    $consulta = $conexion->query('SELECT * FROM usuarios ORDER BY fecha_registro DESC, id_usuario DESC');
+    responder(['success' => true, 'data' => $consulta->fetchAll(PDO::FETCH_ASSOC)]);
+} catch (Throwable $error) {
+    responder(['success' => false, 'message' => mensaje_error($error)], 500);
 }
-// ============================================================
-// FIN APORTE JEREMY LÓPEZ
-// ============================================================
-?>
