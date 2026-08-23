@@ -1,65 +1,49 @@
 <?php
-// ============================================================
-// INICIO APORTE MARIO CUEVA
-// ============================================================
-// api/registrar_prestamo.php
-header('Content-Type: application/json; charset=utf-8');
+require_once __DIR__ . '/helpers.php';
+exigir_post();
 require_once __DIR__ . '/../config/database.php';
 
 try {
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        throw new Exception("Método no permitido");
+    $cedula = dato('cedula_usuario');
+    $codigo = dato('codigo_libro');
+    $fecha_limite = dato('fecha_limite');
+
+    if (!$cedula || !$codigo || !$fecha_limite) {
+        throw new Exception('Selecciona un lector, un libro y la fecha límite de devolución.');
+    }
+    $fecha = DateTime::createFromFormat('!Y-m-d', $fecha_limite);
+    if (!$fecha || $fecha->format('Y-m-d') !== $fecha_limite || $fecha_limite < date('Y-m-d')) {
+        throw new Exception('La fecha de devolución debe ser válida y no puede estar en el pasado.');
     }
 
-    $cedula_usuario = $_POST['cedula_usuario'] ?? '';
-    $codigo_libro = $_POST['codigo_libro'] ?? '';
-    $fecha_limite = $_POST['fecha_limite'] ?? '';
-
-    if (empty($cedula_usuario) || empty($codigo_libro) || empty($fecha_limite)) {
-        throw new Exception("Todos los campos son obligatorios.");
-    }
-
-    $stmtUser = $conexion->prepare("SELECT id_usuario FROM usuarios WHERE cedula = ?");
-    $stmtUser->execute([$cedula_usuario]);
-    $usuario = $stmtUser->fetch(PDO::FETCH_ASSOC);
-
+    $conexion->beginTransaction();
+    $consulta_usuario = $conexion->prepare("SELECT id_usuario, nombres, apellidos FROM usuarios WHERE cedula = ? AND estado = 'ACTIVO'");
+    $consulta_usuario->execute([$cedula]);
+    $usuario = $consulta_usuario->fetch(PDO::FETCH_ASSOC);
     if (!$usuario) {
-        throw new Exception("El usuario con cédula $cedula_usuario no está registrado.");
+        throw new Exception('El lector seleccionado no existe o no está activo.');
     }
-    $id_usuario = $usuario['id_usuario'];
 
-    $stmtBook = $conexion->prepare("SELECT id_libro FROM libros WHERE codigo = ?");
-    $stmtBook->execute([$codigo_libro]);
-    $libro = $stmtBook->fetch(PDO::FETCH_ASSOC);
-
+    $consulta_libro = $conexion->prepare("SELECT id_libro, titulo, cantidad_disponible FROM libros WHERE codigo = ? AND estado = 'ACTIVO' FOR UPDATE");
+    $consulta_libro->execute([$codigo]);
+    $libro = $consulta_libro->fetch(PDO::FETCH_ASSOC);
     if (!$libro) {
-        throw new Exception("El código de libro ingresado no existe.");
+        throw new Exception('El libro seleccionado no existe o no está activo.');
     }
-    $id_libro = $libro['id_libro'];
+    if ((int) $libro['cantidad_disponible'] < 1) {
+        throw new Exception('No hay ejemplares disponibles para prestar este libro.');
+    }
 
-    // Usamos 'ACTIVO' que es un valor válido del ENUM de tu tabla
-    $sql = "INSERT INTO prestamos (id_usuario, id_libro, fecha_prestamo, fecha_devolucion_programada, estado, fecha_registro) 
-            VALUES (:id_usuario, :id_libro, NOW(), :fecha_limite, 'ACTIVO', NOW())";
-    
-    $stmt = $conexion->prepare($sql);
-    $stmt->execute([
-        ':id_usuario' => $id_usuario,
-        ':id_libro' => $id_libro,
-        ':fecha_limite' => $fecha_limite
-    ]);
-
-    echo json_encode([
-        "success" => true,
-        "message" => "¡Préstamo registrado exitosamente!"
-    ]);
-
-} catch (Exception $e) {
-    echo json_encode([
-        "success" => false,
-        "message" => $e->getMessage()
-    ]);
+    $sql = "INSERT INTO prestamos (id_usuario, id_libro, fecha_prestamo, fecha_devolucion_programada, estado, observacion, fecha_registro) VALUES (?, ?, CURDATE(), ?, 'ACTIVO', ?, NOW())";
+    $conexion->prepare($sql)->execute([$usuario['id_usuario'], $libro['id_libro'], $fecha_limite, dato('observacion') ?: null]);
+    $id = (int) $conexion->lastInsertId();
+    $conexion->prepare('UPDATE libros SET cantidad_disponible = cantidad_disponible - 1 WHERE id_libro = ?')->execute([$libro['id_libro']]);
+    $conexion->commit();
+    registrar_bitacora($conexion, 'REGISTRAR PRÉSTAMO', 'Se prestó ' . $libro['titulo'] . ' a ' . $usuario['nombres'] . ' ' . $usuario['apellidos'], 'prestamos', $id);
+    responder(['success' => true, 'message' => 'Préstamo registrado. La disponibilidad del libro fue actualizada.', 'id' => $id]);
+} catch (Throwable $error) {
+    if ($conexion->inTransaction()) {
+        $conexion->rollBack();
+    }
+    responder(['success' => false, 'message' => mensaje_error($error)], 400);
 }
-// ============================================================
-// FIN APORTE MARIO CUEVA
-// ============================================================
-?>
