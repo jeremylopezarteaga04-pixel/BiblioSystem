@@ -1,0 +1,1049 @@
+/* ============================================================
+   BIBLIOSYSTEM - AUTENTICACIÓN
+   Login / Registro / Activación de cuenta
+   ============================================================ */
+
+
+/* ============================================================
+   VARIABLES
+   ============================================================ */
+
+:root {
+  --auth-bg: #f4f6f8;
+  --auth-dark: #111827;
+  --auth-dark-soft: #1f2937;
+  --auth-card: #ffffff;
+
+  --auth-text: #172033;
+  --auth-muted: #6b7280;
+  --auth-border: #e5e7eb;
+
+  --auth-accent: #c58b5d;
+  --auth-accent-dark: #a96f45;
+  --auth-accent-light: #f5e7db;
+
+  --auth-success: #287a52;
+  --auth-error: #b94b4b;
+
+  --auth-radius: 18px;
+}
+
+
+/* ============================================================
+   RESET
+   ============================================================ */
+
+.auth-page {
+  margin: 0;
+  min-height: 100vh;
+
+  background: var(--auth-bg);
+
+  color: var(--auth-text);
+
+  font-family: "DM Sans", sans-serif;
+}
+
+
+/* ============================================================
+   LAYOUT PRINCIPAL
+   ============================================================ */
+
+.auth-layout {
+  min-height: 100vh;
+
+  display: grid;
+  grid-template-columns: minmax(420px, 1fr) minmax(480px, 0.9fr);
+}
+
+
+/* ============================================================
+   PANEL IZQUIERDO
+   ============================================================ */
+
+.auth-showcase {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+  min-height: 100vh;
+
+  padding: 42px 60px;
+
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 80% 20%,
+      rgba(197, 139, 93, 0.18),
+      transparent 34%
+    ),
+    linear-gradient(
+      145deg,
+      #111827 0%,
+      #172033 55%,
+      #202b3d 100%
+    );
+
+  color: #ffffff;
+}
+
+
+/* ============================================================
+   MARCA
+   ============================================================ */
+
+.auth-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 13px;
+
+  width: fit-content;
+
+  color: #ffffff;
+
+  text-decoration: none;
+}
+
+.auth-brand .brand-mark,
+.auth-mobile-brand .brand-mark {
+  width: 43px;
+  height: 43px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 12px;
+
+  background: var(--auth-accent);
+
+  color: #ffffff;
+
+  font-family: "Playfair Display", serif;
+  font-size: 24px;
+  font-weight: 800;
+
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.auth-brand strong {
+  display: block;
+
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.auth-brand small {
+  display: block;
+
+  margin-top: 1px;
+
+  color: rgba(255, 255, 255, 0.58);
+
+  font-size: 11px;
+  font-weight: 500;
+}
+
+
+/* ============================================================
+   CONTENIDO DEL SHOWCASE
+   ============================================================ */
+
+.auth-showcase-content {
+  position: relative;
+  z-index: 2;
+
+  max-width: 620px;
+
+  margin: auto 0;
+}
+
+.auth-showcase .eyebrow {
+  display: inline-block;
+
+  margin-bottom: 18px;
+
+  color: #d9a87e;
+
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.auth-showcase h1 {
+  max-width: 600px;
+
+  margin: 0;
+
+  color: #ffffff;
+
+  font-family: "Playfair Display", serif;
+
+  font-size: clamp(42px, 4vw, 68px);
+  line-height: 1.05;
+
+  letter-spacing: -0.04em;
+}
+
+.auth-showcase-content > p {
+  max-width: 520px;
+
+  margin: 26px 0 0;
+
+  color: rgba(255, 255, 255, 0.68);
+
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+
+/* ============================================================
+   LIBROS DECORATIVOS
+   ============================================================ */
+
+.auth-books {
+  position: relative;
+
+  height: 190px;
+
+  margin-top: 45px;
+}
+
+.auth-book {
+  position: absolute;
+
+  display: flex;
+  align-items: flex-end;
+
+  padding: 18px;
+
+  border-radius: 8px 10px 10px 8px;
+
+  box-shadow:
+    0 22px 45px rgba(0, 0, 0, 0.28),
+    inset 6px 0 0 rgba(255, 255, 255, 0.08);
+
+  font-family: "Playfair Display", serif;
+
+  color: rgba(255, 255, 255, 0.95);
+
+  line-height: 1.1;
+}
+
+.auth-book::before {
+  content: "";
+
+  position: absolute;
+
+  left: 10px;
+  top: 0;
+  bottom: 0;
+
+  width: 1px;
+
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.auth-book-one {
+  left: 4%;
+  bottom: 5px;
+
+  width: 92px;
+  height: 148px;
+
+  background: #743e3e;
+
+  transform: rotate(-7deg);
+}
+
+.auth-book-two {
+  left: 19%;
+  bottom: 0;
+
+  width: 105px;
+  height: 166px;
+
+  background: #315a62;
+
+  transform: rotate(2deg);
+
+  z-index: 2;
+}
+
+.auth-book-three {
+  left: 36%;
+  bottom: 12px;
+
+  width: 92px;
+  height: 143px;
+
+  background: #886d45;
+
+  transform: rotate(7deg);
+
+  z-index: 1;
+}
+
+.auth-book span {
+  position: relative;
+
+  z-index: 2;
+
+  font-size: 13px;
+}
+
+
+/* ============================================================
+   FOOTER DEL SHOWCASE
+   ============================================================ */
+
+.auth-showcase-footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  color: rgba(255, 255, 255, 0.38);
+
+  font-size: 9px;
+  font-weight: 800;
+
+  letter-spacing: 0.13em;
+}
+
+
+/* ============================================================
+   PANEL DERECHO
+   ============================================================ */
+
+.auth-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  min-height: 100vh;
+
+  padding: 50px;
+
+  background: #f7f8fa;
+}
+
+
+/* ============================================================
+   TARJETA
+   ============================================================ */
+
+.auth-card {
+  width: 100%;
+  max-width: 470px;
+
+  margin: auto;
+
+  padding: 48px;
+
+  border: 1px solid rgba(17, 24, 39, 0.06);
+
+  border-radius: var(--auth-radius);
+
+  background: var(--auth-card);
+
+  box-shadow:
+    0 25px 70px rgba(17, 24, 39, 0.08);
+}
+
+
+/* ============================================================
+   HEADER DEL LOGIN
+   ============================================================ */
+
+.auth-card-header {
+  margin-bottom: 32px;
+}
+
+.auth-card-header .eyebrow {
+  display: block;
+
+  margin-bottom: 10px;
+
+  color: var(--auth-accent-dark);
+
+  font-size: 10px;
+  font-weight: 800;
+
+  letter-spacing: 0.14em;
+}
+
+.auth-card-header h2 {
+  margin: 0;
+
+  color: var(--auth-text);
+
+  font-family: "Playfair Display", serif;
+
+  font-size: 38px;
+  line-height: 1.1;
+
+  letter-spacing: -0.025em;
+}
+
+.auth-card-header p {
+  margin: 10px 0 0;
+
+  color: var(--auth-muted);
+
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+
+/* ============================================================
+   MARCA MÓVIL
+   ============================================================ */
+
+.auth-mobile-brand {
+  display: none;
+}
+
+
+/* ============================================================
+   FORMULARIO
+   ============================================================ */
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+
+  gap: 21px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.form-field label {
+  color: #374151;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.field-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 15px;
+}
+
+
+/* ============================================================
+   INPUTS
+   ============================================================ */
+
+.input-wrapper {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 16px;
+
+  display: grid;
+  place-items: center;
+
+  width: 20px;
+
+  color: #9ca3af;
+
+  font-size: 15px;
+  font-weight: 700;
+
+  pointer-events: none;
+}
+
+.input-wrapper input {
+  width: 100%;
+  height: 52px;
+
+  box-sizing: border-box;
+
+  padding: 0 46px;
+
+  border: 1px solid var(--auth-border);
+  border-radius: 11px;
+
+  outline: none;
+
+  background: #fafafa;
+
+  color: var(--auth-text);
+
+  font-family: "DM Sans", sans-serif;
+  font-size: 14px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.input-wrapper input::placeholder {
+  color: #a6acb6;
+}
+
+.input-wrapper input:hover {
+  border-color: #d1d5db;
+}
+
+.input-wrapper input:focus {
+  border-color: var(--auth-accent);
+
+  background: #ffffff;
+
+  box-shadow:
+    0 0 0 4px rgba(197, 139, 93, 0.12);
+}
+
+
+/* ============================================================
+   MOSTRAR CONTRASEÑA
+   ============================================================ */
+
+.password-toggle {
+  position: absolute;
+  right: 10px;
+
+  width: 34px;
+  height: 34px;
+
+  display: grid;
+  place-items: center;
+
+  border: 0;
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: #9ca3af;
+
+  cursor: pointer;
+
+  font-size: 12px;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.password-toggle:hover {
+  background: #f1f2f4;
+
+  color: var(--auth-text);
+}
+
+
+/* ============================================================
+   ENLACES
+   ============================================================ */
+
+.auth-link {
+  color: var(--auth-accent-dark);
+
+  font-size: 12px;
+  font-weight: 700;
+
+  text-decoration: none;
+}
+
+.auth-link:hover {
+  text-decoration: underline;
+}
+
+
+/* ============================================================
+   RECORDAR SESIÓN
+   ============================================================ */
+
+.remember-option {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  color: #6b7280;
+
+  font-size: 12px;
+
+  cursor: pointer;
+}
+
+.remember-option input {
+  position: absolute;
+
+  opacity: 0;
+
+  pointer-events: none;
+}
+
+.custom-checkbox {
+  width: 17px;
+  height: 17px;
+
+  flex: 0 0 17px;
+
+  border: 1px solid #d1d5db;
+
+  border-radius: 5px;
+
+  background: #ffffff;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.remember-option input:checked + .custom-checkbox {
+  border-color: var(--auth-accent);
+
+  background: var(--auth-accent);
+
+  box-shadow:
+    inset 0 0 0 4px #ffffff;
+}
+
+
+/* ============================================================
+   BOTÓN PRINCIPAL
+   ============================================================ */
+
+.auth-submit {
+  width: 100%;
+  height: 53px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 14px;
+
+  margin-top: 4px;
+
+  border: 0;
+  border-radius: 11px;
+
+  background: var(--auth-dark);
+
+  color: #ffffff;
+
+  font-family: "DM Sans", sans-serif;
+
+  font-size: 14px;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 12px 24px rgba(17, 24, 39, 0.15);
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.auth-submit:hover {
+  background: #1f2937;
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 16px 28px rgba(17, 24, 39, 0.19);
+}
+
+.auth-submit:active {
+  transform: translateY(0);
+}
+
+.auth-submit:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+
+  transform: none;
+}
+
+.submit-arrow {
+  font-size: 17px;
+
+  transition: transform 0.2s ease;
+}
+
+.auth-submit:hover .submit-arrow {
+  transform: translateX(4px);
+}
+
+
+/* ============================================================
+   DIVISOR
+   ============================================================ */
+
+.auth-divider {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 28px 0;
+}
+
+.auth-divider::before {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  right: 0;
+
+  height: 1px;
+
+  background: #edf0f2;
+}
+
+.auth-divider span {
+  position: relative;
+
+  padding: 0 12px;
+
+  background: #ffffff;
+
+  color: #a0a7b2;
+
+  font-size: 11px;
+}
+
+
+/* ============================================================
+   REGISTRO
+   ============================================================ */
+
+.auth-register {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  flex-wrap: wrap;
+
+  gap: 5px;
+
+  color: #7b8492;
+
+  font-size: 13px;
+
+  text-align: center;
+}
+
+.auth-register a {
+  color: var(--auth-accent-dark);
+
+  font-weight: 800;
+
+  text-decoration: none;
+}
+
+.auth-register a:hover {
+  text-decoration: underline;
+}
+
+
+/* ============================================================
+   MENSAJES
+   ============================================================ */
+
+.auth-message {
+  padding: 12px 14px;
+
+  margin-bottom: 20px;
+
+  border-radius: 10px;
+
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.auth-message.error {
+  border: 1px solid rgba(185, 75, 75, 0.15);
+
+  background: #fff3f3;
+
+  color: var(--auth-error);
+}
+
+.auth-message.success {
+  border: 1px solid rgba(40, 122, 82, 0.15);
+
+  background: #effaf4;
+
+  color: var(--auth-success);
+}
+
+
+/* ============================================================
+   INFORMACIÓN
+   ============================================================ */
+
+.auth-info {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 10px;
+
+  margin-top: 26px;
+  padding: 13px;
+
+  border: 1px solid #eee7df;
+
+  border-radius: 10px;
+
+  background: #fdf9f5;
+}
+
+.info-icon {
+  width: 18px;
+  height: 18px;
+
+  flex: 0 0 18px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 50%;
+
+  background: var(--auth-accent-light);
+
+  color: var(--auth-accent-dark);
+
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.auth-info p {
+  margin: 0;
+
+  color: #7b7066;
+
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+
+.auth-footer {
+  width: 100%;
+  max-width: 470px;
+
+  display: flex;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  margin: 0 auto;
+
+  color: #a0a6af;
+
+  font-size: 10px;
+}
+
+
+/* ============================================================
+   UTILIDAD
+   ============================================================ */
+
+.hidden {
+  display: none !important;
+}
+
+
+/* ============================================================
+   ANIMACIONES
+   ============================================================ */
+
+@keyframes authFadeUp {
+  from {
+    opacity: 0;
+
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform: translateY(0);
+  }
+}
+
+.auth-card {
+  animation: authFadeUp 0.45s ease both;
+}
+
+.auth-showcase-content {
+  animation: authFadeUp 0.55s ease both;
+}
+
+
+/* ============================================================
+   RESPONSIVE - TABLET
+   ============================================================ */
+
+@media (max-width: 1050px) {
+
+  .auth-layout {
+    grid-template-columns: 0.85fr 1fr;
+  }
+
+  .auth-showcase {
+    padding: 36px;
+  }
+
+  .auth-panel {
+    padding: 35px;
+  }
+
+  .auth-card {
+    padding: 38px;
+  }
+
+  .auth-showcase h1 {
+    font-size: 48px;
+  }
+
+  .auth-books {
+    transform: scale(0.9);
+
+    transform-origin: left bottom;
+  }
+}
+
+
+/* ============================================================
+   RESPONSIVE - MÓVIL
+   ============================================================ */
+
+@media (max-width: 780px) {
+
+  .auth-layout {
+    display: block;
+  }
+
+  .auth-showcase {
+    display: none;
+  }
+
+  .auth-panel {
+    min-height: 100vh;
+
+    box-sizing: border-box;
+
+    padding: 25px 18px;
+
+    background:
+      radial-gradient(
+        circle at 50% -10%,
+        rgba(197, 139, 93, 0.1),
+        transparent 35%
+      ),
+      #f7f8fa;
+  }
+
+  .auth-card {
+    max-width: 500px;
+
+    padding: 32px 25px;
+
+    border-radius: 16px;
+  }
+
+  .auth-mobile-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin-bottom: 30px;
+
+    color: var(--auth-text);
+
+    font-size: 16px;
+    font-weight: 800;
+  }
+
+  .auth-mobile-brand .brand-mark {
+    width: 38px;
+    height: 38px;
+
+    font-size: 21px;
+  }
+
+  .auth-card-header h2 {
+    font-size: 34px;
+  }
+
+  .auth-footer {
+    max-width: 500px;
+
+    padding: 0 5px;
+
+    margin-top: 20px;
+  }
+}
+
+
+/* ============================================================
+   RESPONSIVE - MÓVIL PEQUEÑO
+   ============================================================ */
+
+@media (max-width: 430px) {
+
+  .auth-panel {
+    padding: 15px;
+  }
+
+  .auth-card {
+    padding: 28px 20px;
+  }
+
+  .auth-card-header {
+    margin-bottom: 27px;
+  }
+
+  .auth-card-header h2 {
+    font-size: 30px;
+  }
+
+  .field-label-row {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 5px;
+  }
+
+  .auth-footer {
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 5px;
+  }
+}
