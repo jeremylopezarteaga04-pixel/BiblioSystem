@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta name="theme-color" content="#111827">
+  <meta
+    name="description"
+    content="Inicia sesión en BiblioSystem, sistema de gestión de bibliotecas."
+  >
+
+  <title>BiblioSystem | Iniciar sesión</title>
+
+  <!-- Tipografías utilizadas por BiblioSystem -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
+  <!-- CSS principal -->
+  <link rel="stylesheet" href="../css/styles.css">
+
+  <!-- CSS específico de autenticación -->
+  <link rel="stylesheet" href="../css/auth.css">
+</head>
+
+<body class="auth-page">
+
+  <main class="auth-layout">
+
+    <!-- =====================================================
+         LADO IZQUIERDO
+         ===================================================== -->
+
+    <section class="auth-showcase">
+
+      <a href="../index.html" class="auth-brand">
+        <span class="brand-mark">B</span>
+
+        <span>
+          <strong>BiblioSystem</strong>
+          <small>Biblioteca digital</small>
+        </span>
+      </a>
+
+      <div class="auth-showcase-content">
+
+        <span class="eyebrow">
+          TU BIBLIOTECA, EN UN SOLO LUGAR
+        </span>
+
+        <h1>
+          Cada libro abre
+          <br>
+          una nueva historia.
+        </h1>
+
+        <p>
+          Administra tus préstamos, descubre nuevos libros
+          y mantén todo el conocimiento de tu biblioteca
+          organizado.
+        </p>
+
+        <div class="auth-books" aria-hidden="true">
+
+          <div class="auth-book auth-book-one">
+            <span>1984</span>
+          </div>
+
+          <div class="auth-book auth-book-two">
+            <span>Cien años<br>de soledad</span>
+          </div>
+
+          <div class="auth-book auth-book-three">
+            <span>Clean<br>Code</span>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="auth-showcase-footer">
+        <span>LECTURA SIN LÍMITES</span>
+        <span>·</span>
+        <span>CONOCIMIENTO QUE SE COMPARTE</span>
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         LADO DERECHO - LOGIN
+         ===================================================== -->
+
+    <section class="auth-panel">
+
+      <div class="auth-card">
+
+        <div class="auth-card-header">
+
+          <span class="auth-mobile-brand">
+            <span class="brand-mark">B</span>
+            BiblioSystem
+          </span>
+
+          <span class="eyebrow">
+            BIENVENIDO DE NUEVO
+          </span>
+
+          <h2>
+            Iniciar sesión
+          </h2>
+
+          <p>
+            Accede a tu cuenta para continuar.
+          </p>
+
+        </div>
+
+
+        <!-- Mensaje de error -->
+        <div
+          id="login-error"
+          class="auth-message error hidden"
+          role="alert"
+        ></div>
+
+
+        <!-- Formulario -->
+
+        <form id="login-form" class="auth-form">
+
+          <!-- Correo -->
+
+          <div class="form-field">
+
+            <label for="login-email">
+              Correo electrónico
+            </label>
+
+            <div class="input-wrapper">
+
+              <span class="input-icon" aria-hidden="true">
+                @
+              </span>
+
+              <input
+                type="email"
+                id="login-email"
+                name="correo"
+                placeholder="correo@ejemplo.com"
+                autocomplete="email"
+                required
+              >
+
+            </div>
+
+          </div>
+
+
+          <!-- Contraseña -->
+
+          <div class="form-field">
+
+            <div class="field-label-row">
+
+              <label for="login-password">
+                Contraseña
+              </label>
+
+              <a
+                href="#"
+                id="forgot-password"
+                class="auth-link"
+              >
+                ¿Olvidaste tu contraseña?
+              </a>
+
+            </div>
+
+            <div class="input-wrapper">
+
+              <span class="input-icon" aria-hidden="true">
+                •
+              </span>
+
+              <input
+                type="password"
+                id="login-password"
+                name="password"
+                placeholder="Ingresa tu contraseña"
+                autocomplete="current-password"
+                required
+              >
+
+              <button
+                type="button"
+                class="password-toggle"
+                id="toggle-password"
+                aria-label="Mostrar contraseña"
+              >
+                ◉
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <!-- Recordarme -->
+
+          <label class="remember-option">
+
+            <input
+              type="checkbox"
+              id="remember-me"
+            >
+
+            <span class="custom-checkbox"></span>
+
+            <span>
+              Mantener sesión iniciada
+            </span>
+
+          </label>
+
+
+          <!-- Botón -->
+
+          <button
+            type="submit"
+            class="auth-submit"
+            id="login-submit"
+          >
+            <span>Iniciar sesión</span>
+            <span class="submit-arrow">→</span>
+          </button>
+
+        </form>
+
+
+        <!-- Registro -->
+
+        <div class="auth-divider">
+          <span>o</span>
+        </div>
+
+        <div class="auth-register">
+
+          <span>
+            ¿Aún no tienes una cuenta?
+          </span>
+
+          <a href="register.html">
+            Crear una cuenta
+          </a>
+
+        </div>
+
+
+        <!-- Información -->
+
+        <div class="auth-info">
+
+          <span class="info-icon">
+            i
+          </span>
+
+          <p>
+            Si tu cuenta fue creada por un administrador,
+            podrás activarla y establecer tu contraseña
+            desde el proceso de registro.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <footer class="auth-footer">
+
+        <span>
+          © 2026 BiblioSystem
+        </span>
+
+        <span>
+          Sistema de gestión bibliotecaria
+        </span>
+
+      </footer>
+
+    </section>
+
+  </main>
+
+
+  <!-- =====================================================
+       JAVASCRIPT
+       ===================================================== -->
+
+  <script src="../js/auth.js"></script>
+
+</body>
+</html>
