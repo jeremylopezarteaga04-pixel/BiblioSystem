@@ -1,0 +1,886 @@
+:root {
+  --register-dark: #111827;
+  --register-dark-2: #1f2937;
+  --register-orange: #c58b5d;
+  --register-orange-dark: #a96f45;
+  --register-orange-light: #f5e7db;
+  --register-purple: #7565ee;
+  --register-purple-dark: #6253dc;
+  --register-text: #182033;
+  --register-muted: #71809a;
+  --register-border: #dce2eb;
+  --register-input-bg: #fafbfc;
+  --register-page-bg: #f4f6fa;
+  --register-white: #ffffff;
+}
+
+/* ============================================================
+   RESET
+   ============================================================ */
+
+.register-page {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  font-family: "DM Sans", sans-serif;
+  color: var(--register-text);
+  background: var(--register-page-bg);
+}
+
+.register-page *,
+.register-page *::before,
+.register-page *::after {
+  box-sizing: border-box;
+}
+
+/* ============================================================
+   LAYOUT PRINCIPAL
+   ============================================================ */
+
+.register-layout {
+  display: grid;
+  grid-template-columns:
+    minmax(420px, 52%)
+    minmax(480px, 48%);
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* ============================================================
+   PANEL IZQUIERDO
+   ============================================================ */
+
+.register-visual {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 100vh;
+  padding: 42px 60px;
+  overflow: hidden;
+  color: #ffffff;
+  background:
+    radial-gradient(
+      circle at 80% 20%,
+      rgba(197, 139, 93, 0.18),
+      transparent 34%
+    ),
+    linear-gradient(
+      145deg,
+      #111827 0%,
+      #172033 55%,
+      #202b3d 100%
+    );
+}
+
+/* ============================================================
+   CÍRCULOS DECORATIVOS
+   ============================================================ */
+
+.register-visual::before {
+  content: "";
+  position: absolute;
+  width: 330px;
+  height: 330px;
+  top: -190px;
+  right: -40px;
+  border-radius: 50%;
+  background: rgba(197, 139, 93, 0.08);
+  pointer-events: none;
+}
+
+.register-visual::after {
+  content: "";
+  position: absolute;
+  width: 350px;
+  height: 350px;
+  right: -170px;
+  bottom: -170px;
+  border-radius: 50%;
+  background: rgba(197, 139, 93, 0.06);
+  pointer-events: none;
+}
+
+/* ============================================================
+   MARCA
+   ============================================================ */
+
+.register-brand {
+  position: relative;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  gap: 13px;
+  width: fit-content;
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.register-brand-mark {
+  width: 43px;
+  height: 43px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--register-orange);
+  color: #ffffff;
+  font-family: "Playfair Display", serif;
+  font-size: 24px;
+  font-weight: 800;
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.20);
+}
+
+.register-brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.register-brand-text strong {
+  display: block;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.register-brand-text small {
+  display: block;
+  margin-top: 3px;
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* ============================================================
+   CONTENIDO VISUAL
+   ============================================================ */
+
+.register-visual-content {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  max-width: 620px;
+  margin: auto 0;
+}
+
+.register-eyebrow {
+  display: inline-block;
+  margin-bottom: 18px;
+  color: #d9a87e;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.register-visual h1 {
+  max-width: 600px;
+  margin: 0;
+  color: #ffffff;
+  font-family: "Playfair Display", serif;
+  font-size: clamp(42px, 4vw, 68px);
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+}
+
+.register-visual-content > p {
+  max-width: 520px;
+  margin: 26px 0 0;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+/* ============================================================
+   LIBROS DECORATIVOS
+   ============================================================ */
+
+.register-books {
+  position: relative;
+  width: 520px;
+  height: 205px;
+  margin: 42px auto 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ============================================================
+   LIBRO BASE
+   ============================================================ */
+
+.register-book {
+  position: absolute;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 18px;
+  border-radius: 8px 10px 10px 8px;
+  box-shadow:
+    0 22px 45px rgba(0, 0, 0, 0.28),
+    inset 6px 0 0 rgba(255, 255, 255, 0.08);
+  font-family: "Playfair Display", serif;
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 1.1;
+}
+
+.register-book::before {
+  content: "";
+  position: absolute;
+  left: 10px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.register-book span {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.15;
+}
+
+/* ============================================================
+   LIBRO 1984
+   ============================================================ */
+
+.register-book-one {
+  left: 82px;
+  bottom: 5px;
+  width: 112px;
+  height: 178px;
+  background: #743e3e;
+  transform: rotate(-7deg);
+  z-index: 1;
+}
+
+.register-book-one span {
+  transform: rotate(7deg);
+}
+
+/* ============================================================
+   LIBRO CIEN AÑOS DE SOLEDAD
+   ============================================================ */
+
+.register-book-two {
+  left: 195px;
+  bottom: 0;
+  width: 125px;
+  height: 195px;
+  background: #315a62;
+  transform: rotate(2deg);
+  z-index: 3;
+}
+
+/* ============================================================
+   LIBRO CLEAN CODE
+   ============================================================ */
+
+.register-book-three {
+  left: 320px;
+  bottom: 8px;
+  width: 112px;
+  height: 178px;
+  background: #886d45;
+  transform: rotate(7deg);
+  z-index: 2;
+}
+
+.register-book-three span {
+  transform: rotate(-7deg);
+}
+
+/* ============================================================
+   FOOTER DEL PANEL IZQUIERDO
+   ============================================================ */
+.register-visual-footer {
+  position: absolute;
+  left: 50%;
+  bottom: -15px;
+  transform: translateX(-50%);
+
+  z-index: 5;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  width: max-content;
+  max-width: calc(100% - 40px);
+
+  color: rgba(255, 255, 255, 0.38);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.20em;
+  white-space: nowrap;
+  text-align: center;
+}
+/* ============================================================
+   PANEL DERECHO
+   ============================================================ */
+
+.register-form-panel {
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 20px 34px 40px;
+  background: #f5f6f9;
+}
+
+/* ============================================================
+   SCROLL
+   ============================================================ */
+
+.register-form-panel::-webkit-scrollbar {
+  width: 8px;
+}
+
+.register-form-panel::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.register-form-panel::-webkit-scrollbar-thumb {
+  border-radius: 20px;
+  background: #c8ceda;
+}
+
+.register-form-panel::-webkit-scrollbar-thumb:hover {
+  background: #aeb6c5;
+}
+
+/* ============================================================
+   WRAPPER
+   ============================================================ */
+
+.register-form-wrapper {
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+/* ============================================================
+   TARJETA
+   ============================================================ */
+
+.register-card {
+  width: 100%;
+  padding: 38px 46px 32px;
+  border: 1px solid rgba(220, 226, 235, 0.8);
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow:
+    0 20px 50px rgba(31, 41, 55, 0.08);
+}
+
+/* ============================================================
+   CABECERA
+   ============================================================ */
+
+.register-card-header {
+  margin-bottom: 30px;
+}
+
+.register-card-eyebrow {
+  display: block;
+  margin-bottom: 10px;
+  color: #c8793f;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.register-card-header h2 {
+  margin: 0;
+  color: #182033;
+  font-family: "Playfair Display", serif;
+  font-size: 38px;
+  line-height: 1.05;
+  letter-spacing: -0.8px;
+}
+
+.register-card-header p {
+  margin: 8px 0 0;
+  color: #758197;
+  font-size: 14px;
+}
+
+/* ============================================================
+   FORMULARIO
+   ============================================================ */
+
+.register-form {
+  width: 100%;
+}
+
+.register-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 13px;
+}
+
+.register-field {
+  margin-bottom: 17px;
+}
+
+.register-field label {
+  display: block;
+  margin-bottom: 7px;
+  color: #364158;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.optional {
+  color: #8b96a9;
+  font-weight: 500;
+}
+
+/* ============================================================
+   INPUTS
+   ============================================================ */
+
+.register-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 43px;
+  border: 1px solid var(--register-border);
+  border-radius: 10px;
+  background: var(--register-input-bg);
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.register-input-wrapper:focus-within {
+  border-color: var(--register-purple);
+  background: #ffffff;
+  box-shadow:
+    0 0 0 3px rgba(117, 101, 238, 0.10);
+}
+
+.register-input-icon {
+  flex: 0 0 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #a4afc0;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.register-input-wrapper input {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  padding: 0 12px 0 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #1c2638;
+  font-family: "DM Sans", sans-serif;
+  font-size: 13px;
+}
+
+.register-input-wrapper input::placeholder {
+  color: #9da7b8;
+}
+
+.register-input-wrapper input:-webkit-autofill,
+.register-input-wrapper input:-webkit-autofill:hover,
+.register-input-wrapper input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #1c2638;
+  box-shadow:
+    0 0 0 1000px #ffffff inset;
+}
+
+/* ============================================================
+   BOTÓN MOSTRAR CONTRASEÑA
+   ============================================================ */
+
+.password-toggle {
+  flex: 0 0 38px;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #8e99ac;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.password-toggle:hover {
+  color: var(--register-purple);
+}
+
+/* ============================================================
+   AYUDA
+   ============================================================ */
+
+.register-help {
+  display: block;
+  margin-top: 6px;
+  color: #9aa4b5;
+  font-size: 10px;
+}
+
+/* ============================================================
+   TÉRMINOS
+   ============================================================ */
+
+.register-terms {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin: 8px 0 20px;
+  color: #68748a;
+  font-size: 11px;
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+.register-terms input {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  margin: 1px 0 0;
+  accent-color: var(--register-purple);
+  cursor: pointer;
+}
+
+.register-terms a {
+  color: var(--register-purple);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.register-terms a:hover {
+  text-decoration: underline;
+}
+
+/* ============================================================
+   BOTÓN CREAR CUENTA
+   ============================================================ */
+
+.register-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  height: 44px;
+  border: none;
+  border-radius: 10px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #7767ef,
+      #6655df
+    );
+
+  color: #ffffff;
+  font-family: "DM Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+
+  box-shadow:
+    0 8px 20px rgba(117, 101, 238, 0.22);
+
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.register-submit:hover {
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 11px 24px rgba(117, 101, 238, 0.28);
+}
+
+.register-submit:active {
+  transform: translateY(0);
+}
+
+.register-submit span {
+  font-size: 17px;
+}
+
+/* ============================================================
+   SEPARADOR
+   ============================================================ */
+
+.register-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.register-divider::before,
+.register-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #e3e7ee;
+}
+
+.register-divider span {
+  color: #a0a9b8;
+  font-size: 11px;
+}
+
+/* ============================================================
+   LOGIN
+   ============================================================ */
+
+.register-login {
+  margin: 0;
+  text-align: center;
+  color: #7b8699;
+  font-size: 12px;
+}
+
+.register-login a {
+  color: var(--register-purple);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.register-login a:hover {
+  text-decoration: underline;
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+
+.register-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 13px;
+  color: #9aa4b4;
+  font-size: 9px;
+}
+
+/* ============================================================
+   ANIMACIÓN
+   ============================================================ */
+
+@keyframes registerFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.register-card {
+  animation:
+    registerFadeUp 0.45s ease both;
+}
+
+.register-visual-content {
+  animation:
+    registerFadeUp 0.55s ease both;
+}
+
+/* ============================================================
+   RESPONSIVE - 1100 PX
+   ============================================================ */
+
+@media (max-width: 1100px) {
+
+  .register-layout {
+    grid-template-columns:
+      minmax(390px, 46%)
+      minmax(480px, 54%);
+  }
+
+  .register-visual {
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+
+  .register-visual h1 {
+    font-size: 48px;
+  }
+
+  .register-visual-content > p {
+    font-size: 15px;
+  }
+
+  .register-books {
+    width: 470px;
+    margin-left: auto;
+    margin-right: auto;
+
+    transform:
+      scale(0.90);
+
+    transform-origin:
+      center bottom;
+  }
+
+  .register-form-panel {
+    padding-left: 25px;
+    padding-right: 25px;
+  }
+
+  .register-visual-footer {
+    max-width: calc(100% - 50px);
+    font-size: 8px;
+  }
+}
+
+/* ============================================================
+   RESPONSIVE - 900 PX
+   ============================================================ */
+
+@media (max-width: 900px) {
+
+  .register-layout {
+    grid-template-columns:
+      minmax(350px, 44%)
+      minmax(450px, 56%);
+  }
+
+  .register-visual {
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+
+  .register-visual h1 {
+    font-size: 43px;
+  }
+
+  .register-visual-content > p {
+    font-size: 14px;
+  }
+
+  .register-books {
+    width: 430px;
+
+    transform:
+      scale(0.78);
+
+    transform-origin:
+      center bottom;
+  }
+
+  .register-visual-footer {
+    max-width: calc(100% - 40px);
+    font-size: 8px;
+    letter-spacing: 0.14em;
+  }
+}
+
+/* ============================================================
+   TABLET
+   ============================================================ */
+
+@media (max-width: 850px) {
+
+  .register-page {
+    min-height: 100vh;
+    overflow: auto;
+  }
+
+  .register-layout {
+    display: block;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .register-visual {
+    display: none;
+  }
+
+  .register-form-panel {
+    width: 100%;
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+    padding: 25px 20px 40px;
+  }
+
+  .register-form-wrapper {
+    max-width: 560px;
+  }
+}
+
+/* ============================================================
+   MÓVIL
+   ============================================================ */
+
+@media (max-width: 600px) {
+
+  .register-form-panel {
+    padding:
+      20px 15px 35px;
+  }
+
+  .register-card {
+    padding:
+      28px 22px;
+    border-radius: 16px;
+  }
+
+  .register-card-header {
+    margin-bottom: 27px;
+  }
+
+  .register-card-header h2 {
+    font-size: 32px;
+  }
+
+  .register-form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .register-footer {
+    padding: 0 5px;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
+}
+
+/* ============================================================
+   PANTALLAS MUY PEQUEÑAS
+   ============================================================ */
+
+@media (max-width: 430px) {
+
+  .register-form-panel {
+    padding: 15px;
+  }
+
+  .register-card {
+    padding:
+      25px 19px;
+  }
+
+  .register-card-header h2 {
+    font-size: 30px;
+  }
+
+  .register-input-wrapper {
+    height: 45px;
+  }
+}
