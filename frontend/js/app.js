@@ -79,6 +79,27 @@ function cargarPerfilUsuario() {
   }
 }
 
+// ============================================================
+// SESIÓN Y ROL DEL USUARIO
+// ============================================================
+
+function getUsuarioSesion() {
+  try {
+    const datos = sessionStorage.getItem('bibliosystem_usuario');
+    return datos ? JSON.parse(datos) : null;
+  } catch (error) {
+    console.error('No se pudo obtener la sesión:', error);
+    return null;
+  }
+}
+
+function esAdministrador() {
+  const usuario = getUsuarioSesion();
+  const rol = String(usuario?.rol || '').toUpperCase();
+
+  return rol === 'ADMIN' || rol === 'ADMINISTRADOR';
+}
+
 function formatDate(value) {
   if (!value) return '—';
   const date = new Date(String(value).replace(' ', 'T'));
@@ -168,12 +189,14 @@ function statCard(title, value, note, icon, tone) {
 
 function renderStats() {
   const data = metrics();
-  $('#dashboard-stats').innerHTML = [
+  const administrador = esAdministrador();
+  const dashboardStats = [
     statCard('Títulos registrados', state.books.length, `${data.totalCopies} ejemplares en inventario`, '▤', 'purple'),
     statCard('Ejemplares disponibles', data.available, 'Listos para un nuevo lector', '✓', 'green'),
-    statCard('Lectores registrados', state.users.length, 'Comunidad de la biblioteca', '♙', 'blue'),
+    ...(administrador ? [statCard('Lectores registrados', state.users.length, 'Comunidad de la biblioteca', '♙', 'blue')] : []),
     statCard('Préstamos pendientes', data.active.length + data.overdue.length, `${data.overdue.length} con devolución atrasada`, '⇄', data.overdue.length ? 'red' : 'amber')
   ].join('');
+  $('#dashboard-stats').innerHTML = dashboardStats;
   $('#report-stats').innerHTML = [
     statCard('Total de préstamos', state.loans.length, 'Movimientos históricos', '⇄', 'purple'),
     statCard('Devoluciones realizadas', data.returned.length, 'Préstamos completados', '✓', 'green'),
@@ -331,7 +354,14 @@ function openModal(type, record = null) {
   } else if (type === 'loan') {
     title = 'Registrar préstamo'; eyebrow = 'CIRCULACIÓN DE LIBROS';
     const deadline = new Date(); deadline.setDate(deadline.getDate() + 7);
-    html = field('cedula_usuario', 'Lector', { type: 'select', options: state.users.filter((user) => user.estado !== 'INACTIVO').map((user) => ({ value: user.cedula, label: `${user.nombres} ${user.apellidos} · ${user.cedula}` })), required: true, full: true }) + field('codigo_libro', 'Libro disponible', { type: 'select', options: state.books.filter((book) => Number(book.cantidad_disponible) > 0).map((book) => ({ value: book.codigo, label: `${book.titulo} · ${book.cantidad_disponible} disponibles` })), required: true, full: true }) + field('fecha_limite', 'Fecha límite de devolución', { type: 'date', value: deadline.toLocaleDateString('en-CA'), required: true }) + field('observacion', 'Observación', { placeholder: 'Opcional' });
+    let usuarioLogueado = null;
+    try { usuarioLogueado = JSON.parse(sessionStorage.getItem('bibliosystem_usuario') || 'null'); } catch {}
+    const rol = String(usuarioLogueado?.rol || 'USUARIO').toUpperCase();
+    const administrador = rol === 'ADMIN' || rol === 'ADMINISTRADOR';
+    const usuariosActivos = state.users.filter((user) => user.estado !== 'INACTIVO');
+    const usuariosPrestamo = administrador ? usuariosActivos : usuariosActivos.filter((user) => String(user.cedula) === String(usuarioLogueado?.cedula));
+    const usuarioSeleccionado = administrador ? '' : usuariosPrestamo[0]?.cedula || '';
+    html = field('cedula_usuario', 'Lector', { type: 'select', value: usuarioSeleccionado, options: usuariosPrestamo.map((user) => ({ value: user.cedula, label: `${user.nombres} ${user.apellidos} · ${user.cedula}` })), required: true, full: true }) + field('codigo_libro', 'Libro disponible', { type: 'select', options: state.books.filter((book) => Number(book.cantidad_disponible) > 0).map((book) => ({ value: book.codigo, label: `${book.titulo} · ${book.cantidad_disponible} disponibles` })), required: true, full: true }) + field('fecha_limite', 'Fecha límite de devolución', { type: 'date', value: deadline.toLocaleDateString('en-CA'), required: true }) + field('observacion', 'Observación', { placeholder: 'Opcional' });
   } else if (type === 'category') {
     title = 'Nueva categoría'; eyebrow = 'ORGANIZACIÓN DE LA COLECCIÓN';
     html = field('nombre', 'Nombre de la categoría', { required: true, full: true }) + field('descripcion', 'Descripción', { type: 'textarea', full: true });
