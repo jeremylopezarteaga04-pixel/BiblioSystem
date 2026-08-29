@@ -45,7 +45,7 @@ $usuario = $_SESSION['usuario'];
         <a href="#bitacora" class="nav-link" data-view="bitacora"><span>☷</span> Bitácora</a>
       </nav>
       <section class="sidebar-highlight"><span>LECTURA SIN LÍMITES</span><strong>Cada libro abre una nueva historia.</strong><a href="#libros">Explorar catálogo →</a></section>
-      <div class="sidebar-profile"><span class="profile-avatar" id="profile-avatar">US</span><span><strong id="profile-name">Administrador</strong><small id="profile-role">Administrador</small></span></div>
+      <div class="sidebar-profile"><span class="profile-avatar" id="profile-avatar">US</span><span><strong id="profile-name">Administrador</strong></span></div>
       <a href="../../../api/logout.php" class="logout-button" id="logout-button">Cerrar sesión</a>
     </aside>
 
