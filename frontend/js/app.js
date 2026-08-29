@@ -265,7 +265,7 @@ function bookCard(book, index) {
   const available = Number(book.cantidad_disponible || 0);
   const imagePath = getImagePath(book.imagen);
   const image = book.imagen ? `<img class="book-cover-image" src="${escapeHtml(imagePath)}" alt="Portada de ${escapeHtml(book.titulo)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><strong class="book-cover-fallback" style="display:none">${escapeHtml(book.titulo)}</strong>` : `<strong>${escapeHtml(book.titulo)}</strong>`;
-  return `<article class="book-card"><div class="book-cover cover-${index % 6}${book.imagen ? ' has-image' : ''}">${image}</div><div class="book-content"><span class="book-category">${escapeHtml(book.categoria_nombre || 'Sin categoría')}</span><h3>${escapeHtml(book.titulo)}</h3><p class="book-author">${escapeHtml(book.autor_nombre || 'Autor no registrado')}</p><p class="book-code">${escapeHtml(book.codigo)}${book.editorial ? ` · ${escapeHtml(book.editorial)}` : ''}</p><div class="book-footer"><span class="availability${available ? '' : ' empty'}">${available ? `${available} disponibles` : 'Sin ejemplares'}</span><div class="card-actions"><button class="mini-button" data-action="edit-book" data-id="${book.id_libro}" title="Editar libro">✎</button><button class="mini-button" data-action="delete-book" data-id="${book.id_libro}" title="Eliminar libro">×</button></div></div></div></article>`;
+  return `<article class="book-card"><div class="book-cover cover-${index % 6}${book.imagen ? ' has-image' : ''}">${image}</div><div class="book-content"><span class="book-category">${escapeHtml(book.categoria_nombre || 'Sin categoría')}</span><h3>${escapeHtml(book.titulo)}</h3><p class="book-author">${escapeHtml(book.autor_nombre || 'Autor no registrado')}</p><p class="book-code">${escapeHtml(book.codigo)}${book.editorial ? ` · ${escapeHtml(book.editorial)}` : ''}</p><div class="book-footer"><span class="availability${available ? '' : ' empty'}">${available ? `${available} disponibles` : 'Sin ejemplares'}</span>${esAdministrador() ? `<div class="card-actions"><button class="mini-button" data-action="edit-book" data-id="${book.id_libro}" title="Editar libro">✎</button><button class="mini-button" data-action="delete-book" data-id="${book.id_libro}" title="Eliminar libro">×</button></div>` : ''}</div></div></article>`;
 }
 
 function renderBooks() {
@@ -284,7 +284,7 @@ function renderBooks() {
 
 function renderUsers() {
   const search = normalize($('#user-search').value);
-  const users = state.users.filter((user) => normalize([user.nombres, user.apellidos, user.cedula, user.correo].join(' ')).includes(search));
+  const users = state.users.filter((user) => {const rol = String(user.rol || 'USUARIO').toUpperCase();return rol !== 'ADMIN' && rol !== 'ADMINISTRADOR' && normalize([user.nombres, user.apellidos, user.cedula, user.correo].join(' ')).includes(search);});
   $('#users-grid').innerHTML = users.length ? users.map((user) => {
     const initials = `${String(user.nombres || '?')[0]}${String(user.apellidos || '?')[0]}`.toUpperCase();
     const loans = state.loans.filter((loan) => String(loan.id_usuario) === String(user.id_usuario));
