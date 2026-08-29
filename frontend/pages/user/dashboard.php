@@ -39,7 +39,7 @@ $usuario = $_SESSION['usuario'];
       </nav>
       <div class="sidebar-caption"></div>
       <section class="sidebar-highlight"><span>LECTURA SIN LÍMITES</span><strong>Cada libro abre una nueva historia.</strong><a href="#libros">Explorar catálogo →</a></section>
-      <div class="sidebar-profile"><span class="profile-avatar" id="profile-avatar">US</span><span><strong id="profile-name">Usuario</strong><small id="profile-role">Usuario</small></span></div>
+      <div class="sidebar-profile"><span class="profile-avatar" id="profile-avatar">US</span><span><strong id="profile-name">Usuario</strong></span></div>
       <a href="../../../api/logout.php" class="logout-button" id="logout-button">Cerrar sesión</a>
     </aside>
 
