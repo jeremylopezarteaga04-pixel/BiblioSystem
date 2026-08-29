@@ -14,6 +14,71 @@ function normalize(value) {
   return String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 }
 
+// ============================================================
+// PERFIL DEL USUARIO LOGUEADO
+// ============================================================
+
+function cargarPerfilUsuario() {
+
+  const datosUsuario = sessionStorage.getItem('bibliosystem_usuario');
+
+  if (!datosUsuario) {
+    window.location.replace('../../pages/login.html');
+    return;
+  }
+
+  try {
+
+    const usuario = JSON.parse(datosUsuario);
+
+    const nombre = `${usuario.nombres || ''} ${usuario.apellidos || ''}`.trim();
+
+    const profileName = document.getElementById('profile-name');
+    const profileRole = document.getElementById('profile-role');
+    const profileAvatar = document.getElementById('profile-avatar');
+
+    if (profileName) {
+      profileName.textContent = nombre || 'Usuario';
+    }
+
+    if (profileRole) {
+      const rol = String(usuario.rol || 'USUARIO').toUpperCase();
+
+      profileRole.textContent =
+        rol === 'ADMIN' || rol === 'ADMINISTRADOR'
+          ? 'Administrador'
+          : 'Usuario';
+    }
+
+    if (profileAvatar) {
+
+      const partes = nombre.split(/\s+/).filter(Boolean);
+
+      let iniciales = 'US';
+
+      if (partes.length >= 2) {
+        iniciales =
+          partes[0].charAt(0) +
+          partes[1].charAt(0);
+      } else if (partes.length === 1) {
+        iniciales = partes[0].substring(0, 2);
+      }
+
+      profileAvatar.textContent = iniciales.toUpperCase();
+    }
+
+  } catch (error) {
+
+    console.error(
+      'No se pudo cargar el perfil del usuario:',
+      error
+    );
+
+    sessionStorage.removeItem('bibliosystem_usuario');
+    window.location.replace('../../pages/login.html');
+  }
+}
+
 function formatDate(value) {
   if (!value) return '—';
   const date = new Date(String(value).replace(' ', 'T'));
@@ -348,6 +413,14 @@ function initialize() {
   $('#current-date').textContent = new Intl.DateTimeFormat('es-EC', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date());
   window.addEventListener('hashchange', () => showView(location.hash.slice(1)));
   showView(location.hash.slice(1));
+  // Cargar los datos del usuario que inició sesión
+  cargarPerfilUsuario();
+  const logoutButton = $('#logout-button');
+  if (logoutButton) {
+      logoutButton.addEventListener('click', () => {
+          sessionStorage.removeItem('bibliosystem_usuario');
+      });
+  }
   document.addEventListener('click', (event) => { const trigger = event.target.closest('[data-action]'); if (trigger) handleAction(trigger.dataset.action, trigger.dataset.id || ''); });
   $('#modal-form').addEventListener('submit', handleSubmit);
   $('#close-modal').addEventListener('click', closeModal); $('#cancel-modal').addEventListener('click', closeModal);
@@ -364,3 +437,17 @@ function initialize() {
 }
 
 document.addEventListener('DOMContentLoaded', initialize);
+
+window.addEventListener('pageshow', () => {
+
+  const datosUsuario = sessionStorage.getItem(
+    'bibliosystem_usuario'
+  );
+
+  if (!datosUsuario) {
+
+    window.location.replace('../../pages/login.html');
+
+  }
+
+});
