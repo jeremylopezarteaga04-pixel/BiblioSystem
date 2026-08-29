@@ -453,9 +453,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       event.preventDefault();
 
-      showError(
-        'La recuperación de contraseña estará disponible próximamente.'
-      );
+      window.location.href = 'forgot-password.html';
 
     });
 
