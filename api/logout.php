@@ -2,8 +2,6 @@
 
 session_start();
 
-require_once __DIR__ . '/helpers.php';
-
 $_SESSION = [];
 
 if (ini_get('session.use_cookies')) {
@@ -23,7 +21,5 @@ if (ini_get('session.use_cookies')) {
 
 session_destroy();
 
-responder([
-    'success' => true,
-    'message' => 'Sesión cerrada correctamente.'
-]);
+header('Location: ../frontend/pages/login.html');
+exit;
