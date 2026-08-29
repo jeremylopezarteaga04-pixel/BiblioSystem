@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", () => {
 
   /* ============================================================
@@ -325,10 +324,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const value = telefono.value.trim();
 
-    /*
-     * Es opcional.
-     */
-
     if (value === "") {
 
       removeError(telefono);
@@ -360,10 +355,6 @@ document.addEventListener("DOMContentLoaded", () => {
   function validateDireccion() {
 
     const value = direccion.value.trim();
-
-    /*
-     * Es opcional.
-     */
 
     if (value === "") {
 
@@ -539,6 +530,28 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 
+  password.addEventListener("input", () => {
+
+    if (confirmPassword.value === "") {
+      return;
+    }
+
+    if (confirmPassword.value !== password.value) {
+
+      showError(
+        confirmPassword,
+        "Las contraseñas no coinciden."
+      );
+
+    } else {
+
+      removeError(confirmPassword);
+
+    }
+
+  });
+
+
   /* ============================================================
      VALIDACIÓN AL SALIR DEL CAMPO
      ============================================================ */
@@ -588,12 +601,7 @@ document.addEventListener("DOMContentLoaded", () => {
      ENVÍO DEL FORMULARIO
      ============================================================ */
 
-  registerForm.addEventListener("submit", (event) => {
-
-    /*
-     * IMPORTANTE:
-     * Evita que el navegador envíe el formulario.
-     */
+  registerForm.addEventListener("submit", async (event) => {
 
     event.preventDefault();
 
@@ -601,7 +609,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* ------------------------------------------------------------
-       Ejecutar validaciones
+       EJECUTAR VALIDACIONES
        ------------------------------------------------------------ */
 
     const nombresValidos =
@@ -632,10 +640,6 @@ document.addEventListener("DOMContentLoaded", () => {
       validateTerms();
 
 
-    /* ------------------------------------------------------------
-       Resultado
-       ------------------------------------------------------------ */
-
     const formularioValido =
       nombresValidos &&
       apellidosValidos &&
@@ -660,16 +664,172 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* ============================================================
-       REGISTRO VÁLIDO
+       ENVIAR AL BACKEND
        ============================================================ */
 
-    showFormMessage(
-      "Los datos ingresados son correctos. El registro está listo para continuar.",
-      "success"
-    );
+    const submitButton =
+      registerForm.querySelector(".register-submit");
+
+    const textoOriginal =
+      submitButton.innerHTML;
+
+    submitButton.disabled = true;
+    submitButton.innerHTML = "Creando cuenta...";
 
 
-    console.log("Formulario de registro válido.");
+    try {
+
+      const datos = new FormData();
+
+      datos.append(
+        "cedula",
+        cedula.value.trim()
+      );
+
+      datos.append(
+        "nombres",
+        nombres.value.trim()
+      );
+
+      datos.append(
+        "apellidos",
+        apellidos.value.trim()
+      );
+
+      datos.append(
+        "correo",
+        correo.value.trim()
+      );
+
+      datos.append(
+        "telefono",
+        telefono.value.trim()
+      );
+
+      datos.append(
+        "direccion",
+        direccion.value.trim()
+      );
+
+      /*
+       * La contraseña ahora sí se envía al backend.
+       *
+       * registrar_usuario.php se encarga de:
+       *
+       * 1. Recibirla.
+       * 2. Validar mínimo 6 caracteres.
+       * 3. Generar password_hash().
+       * 4. Crear la cuenta como ACTIVADA.
+       * 5. Asignarle el rol USUARIO.
+       */
+
+      datos.append(
+        "password",
+        password.value
+      );
+
+      datos.append(
+        "confirm_password",
+        confirmPassword.value
+      );
+
+      const respuesta =
+    await fetch("../../api/registrar_usuario.php", {
+      method: "POST",
+      body: datos
+    });
+
+    const textoRespuesta = await respuesta.text();
+
+    console.log("Respuesta del servidor:", textoRespuesta);
+
+    let resultado;
+
+    try {
+
+        resultado = JSON.parse(textoRespuesta);
+
+    } catch (error) {
+
+        console.error(
+            "El servidor no devolvió JSON válido:",
+            textoRespuesta
+        );
+
+        throw new Error(
+            "El servidor devolvió una respuesta inesperada."
+        );
+    }
+
+    if (!respuesta.ok || !resultado.success) {
+
+        throw new Error(
+            resultado.message ||
+            "No se pudo crear la cuenta."
+        );
+
+    }
+
+
+      /* ==========================================================
+         REGISTRO CORRECTO
+         ========================================================== */
+
+      showFormMessage(
+        resultado.message ||
+        "Cuenta creada correctamente.",
+        "success"
+      );
+
+
+      console.log(
+        "Usuario registrado:",
+        resultado
+      );
+
+
+      /*
+       * Limpiar formulario después del registro.
+       */
+
+      registerForm.reset();
+
+      clearErrors();
+
+
+      /*
+       * Volvemos a mostrar el mensaje porque clearErrors()
+       * también elimina el mensaje general.
+       */
+
+      showFormMessage(
+        resultado.message ||
+        "Cuenta creada correctamente.",
+        "success"
+      );
+
+
+    } catch (error) {
+
+      console.error(
+        "Error al registrar usuario:",
+        error
+      );
+
+
+      showFormMessage(
+        error.message ||
+        "Ocurrió un error al crear la cuenta.",
+        "error"
+      );
+
+
+    } finally {
+
+      submitButton.disabled = false;
+      submitButton.innerHTML = textoOriginal;
+
+    }
 
   });
 
