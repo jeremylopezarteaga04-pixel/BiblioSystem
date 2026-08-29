@@ -78,24 +78,6 @@ try {
         );
     }
 
-    // ============================================================
-    // DETERMINAR TIPO DE REGISTRO
-    // ============================================================
-    //
-    // Si viene contraseña:
-    //
-    //   → Registro realizado por el propio usuario
-    //   → Contraseña obligatoria
-    //   → Cuenta ACTIVADA
-    //
-    // Si NO viene contraseña:
-    //
-    //   → Usuario creado por administrador
-    //   → Sin contraseña inicialmente
-    //   → Cuenta PENDIENTE
-    //
-    // ============================================================
-
     if ($password !== '') {
 
         // --------------------------------------------------------
@@ -139,8 +121,18 @@ try {
         // USUARIO CREADO POR ADMINISTRADOR
         // --------------------------------------------------------
 
-        $passwordHash = null;
-        $estadoCuenta = 'PENDIENTE';
+        $passwordHash = password_hash(
+        $cedula,
+        PASSWORD_DEFAULT
+    );
+
+        if ($passwordHash === false) {
+            throw new Exception(
+                'No se pudo procesar la contraseña inicial.'
+            );
+        }
+
+        $estadoCuenta = 'ACTIVADA';
     }
 
     // ============================================================
