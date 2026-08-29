@@ -190,7 +190,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   }
 
-
   // ==========================================================
   // LOGIN
   // ==========================================================
@@ -211,78 +210,163 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-
       const correo = emailInput.value.trim();
       const password = passwordInput.value;
 
-
-      // ------------------------------------------------------
-      // DATOS DEL LOGIN
-      // ------------------------------------------------------
-
-      const loginData = {
-        correo: correo,
-        password: password
-      };
-
-
-      // ------------------------------------------------------
-      // POR AHORA SOLO PREPARAMOS LA PETICIÓN
-      // ------------------------------------------------------
-
-      /*
-        IMPORTANTE:
-
-        Todavía NO hacemos fetch().
-
-        Primero estamos construyendo el frontend.
-
-        Cuando terminemos el endpoint de login del backend,
-        aquí conectaremos:
-
-            POST /api/login
-
-        y recibiremos algo parecido a:
-
-            {
-                "success": true,
-                "usuario": {...},
-                "rol": "ADMINISTRADOR"
-            }
-
-        Después podremos redirigir dependiendo del rol.
-      */
-
-
-      console.log(
-        'Datos preparados para login:',
-        {
-          correo: loginData.correo,
-          password: '********'
-        }
-      );
-
-
-      // ------------------------------------------------------
-      // SIMULACIÓN TEMPORAL
-      // ------------------------------------------------------
-
       setLoading(true);
 
-      await new Promise(resolve => {
-        setTimeout(resolve, 700);
-      });
+      try {
 
-      setLoading(false);
+        // ----------------------------------------------------
+        // DATOS DEL LOGIN
+        // ----------------------------------------------------
 
-      showError(
-        'La autenticación todavía no está conectada. El frontend está listo; falta conectar el endpoint de inicio de sesión.'
-      );
+        const datos = new FormData();
+
+        datos.append('correo', correo);
+        datos.append('password', password);
+
+        // ----------------------------------------------------
+        // ENVIAR AL BACKEND
+        // ----------------------------------------------------
+
+        const respuesta = await fetch(
+          '../../api/login.php',
+          {
+            method: 'POST',
+            body: datos,
+            credentials: 'include'
+          }
+        );
+
+        const textoRespuesta = await respuesta.text();
+
+        console.log(
+          'Respuesta del servidor:',
+          textoRespuesta
+        );
+
+        // ----------------------------------------------------
+        // CONVERTIR RESPUESTA A JSON
+        // ----------------------------------------------------
+
+        let resultado;
+
+        try {
+
+          resultado = JSON.parse(textoRespuesta);
+
+        } catch (error) {
+
+          console.error(
+            'El servidor no devolvió JSON válido:',
+            textoRespuesta
+          );
+
+          throw new Error(
+            'El servidor devolvió una respuesta inesperada.'
+          );
+        }
+
+        // ----------------------------------------------------
+        // ERROR DEL LOGIN
+        // ----------------------------------------------------
+
+        if (!respuesta.ok || !resultado.success) {
+
+          throw new Error(
+            resultado.message ||
+            'Correo o contraseña incorrectos.'
+          );
+
+        }
+
+        // ----------------------------------------------------
+        // GUARDAR INFORMACIÓN DE SESIÓN EN EL NAVEGADOR
+        // ----------------------------------------------------
+
+        if (resultado.usuario) {
+
+          sessionStorage.setItem(
+            'bibliosystem_usuario',
+            JSON.stringify(resultado.usuario)
+          );
+
+        }
+
+        if (resultado.rol) {
+
+          sessionStorage.setItem(
+          'bibliosystem_rol',
+          resultado.usuario.rol
+        );
+
+        }
+
+        // ----------------------------------------------------
+        // RECORDAR CORREO
+        // ----------------------------------------------------
+
+        if (rememberMe && rememberMe.checked) {
+
+          localStorage.setItem(
+            'bibliosystem_remember_email',
+            correo
+          );
+
+        }
+
+        // ----------------------------------------------------
+        // REDIRECCIÓN SEGÚN EL ROL
+        // ----------------------------------------------------
+
+        const rol =
+          String(resultado.usuario?.rol || '').toUpperCase();
+
+        if (
+          rol === 'ADMIN' ||
+          rol === 'ADMINISTRADOR'
+        ) {
+
+          window.location.href =
+            '../pages/admin/dashboard.html';
+
+        } else if (
+          rol === 'USUARIO'
+        ) {
+
+          window.location.href =
+            '../pages/user/dashboard.html';
+
+        } else {
+
+          throw new Error(
+            'El usuario no tiene un rol válido.'
+          );
+
+        }
+
+      } catch (error) {
+
+        console.error(
+          'Error al iniciar sesión:',
+          error
+        );
+
+        showError(
+          error.message ||
+          'No se pudo iniciar sesión.'
+        );
+
+      } finally {
+
+        setLoading(false);
+
+      }
 
     });
 
   }
-
 
   // ==========================================================
   // RECORDAR SESIÓN
