@@ -1,0 +1,75 @@
+<?php
+
+session_start();
+
+if (!isset($_SESSION['usuario'])) {
+    header('Location: ../../pages/login.html');
+    exit;
+}
+
+$usuario = $_SESSION['usuario'];
+
+?>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#111827">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <meta name="description" content="Sistema integral de gestión de bibliotecas y préstamos de libros.">
+  <title>BiblioSystem | Gestión inteligente de bibliotecas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../css/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a href="#dashboard" class="brand"><span class="brand-mark">B</span><span><strong>BiblioSystem</strong><small>Biblioteca digital</small></span></a>
+      <div class="sidebar-caption">PRINCIPAL</div>
+      <nav class="navigation" aria-label="Navegación principal">
+        <a href="#dashboard" class="nav-link active" data-view="dashboard"><span>◫</span> Dashboard</a>
+        <a href="#libros" class="nav-link" data-view="libros"><span>▤</span> Catálogo de libros</a>
+        <a href="#prestamos" class="nav-link" data-view="prestamos"><span>⇄</span> Préstamos <i id="nav-loans">0</i></a>
+      </nav>
+      <div class="sidebar-caption"></div>
+      <section class="sidebar-highlight"><span>LECTURA SIN LÍMITES</span><strong>Cada libro abre una nueva historia.</strong><a href="#libros">Explorar catálogo →</a></section>
+      <div class="sidebar-profile"><span class="profile-avatar" id="profile-avatar">US</span><span><strong id="profile-name">Usuario</strong><small id="profile-role">Usuario</small></span></div>
+      <a href="../../../api/logout.php" class="logout-button" id="logout-button">Cerrar sesión</a>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar"><button id="menu-toggle" class="icon-button mobile-only" aria-label="Abrir menú">☰</button><div><span class="eyebrow" id="current-date"></span><h1 id="page-title">Dashboard</h1></div><div class="topbar-actions"><label class="global-search"><span>⌕</span><input type="search" id="global-search" placeholder="Buscar un libro, lector o préstamo..."></label><button class="icon-button" id="refresh-button" title="Actualizar información">↻</button><button class="primary-button" id="quick-add">+ Nuevo préstamo</button></div></header>
+      <div id="connection-notice" class="connection-notice hidden"></div>
+
+      <section id="view-dashboard" class="view active">
+        <section class="hero-card"><div><span class="hero-kicker">TU BIBLIOTECA, EN UN SOLO LUGAR</span><h2>Historias que se prestan,<br>conocimiento que se comparte.</h2><p>Administra tu colección, acompaña a tus lectores y descubre cómo se mueve tu biblioteca.</p><button class="hero-button" data-action="open-loan">Registrar un préstamo →</button></div><div class="hero-art" aria-hidden="true"><span class="hero-book book-one">1984</span><span class="hero-book book-two">Cien años<br>de soledad</span><span class="hero-book book-three">Clean<br>Code</span></div></section>
+        <div id="dashboard-stats" class="stats-grid"></div>
+        <div class="dashboard-grid"><article class="panel"><div class="panel-heading"><div><span class="eyebrow">ÚLTIMOS SEIS MESES</span><h3>Actividad de préstamos</h3></div><span class="panel-badge">Tiempo real</span></div><div id="activity-chart" class="chart-container"></div></article><article class="panel"><div class="panel-heading"><div><span class="eyebrow">DISTRIBUCIÓN</span><h3>Libros por categoría</h3></div></div><div id="category-chart" class="donut-container"></div></article></div>
+        <article class="panel"><div class="panel-heading"><div><span class="eyebrow">MOVIMIENTOS RECIENTES</span><h3>Últimos préstamos</h3></div><a class="text-link" href="#prestamos">Ver todos →</a></div><div id="recent-loans"></div></article>
+      </section>
+
+      <section id="view-libros" class="view"><div class="section-banner books-banner"><div><span class="eyebrow">COLECCIÓN BIBLIOGRÁFICA</span><h2>Un universo en cada estante.</h2><p>Encuentra, organiza y mantén actualizada toda tu colección.</p></div></div><div class="toolbar"><label class="inline-search">⌕ <input id="book-search" type="search" placeholder="Buscar por título, autor, código o categoría..."></label><select id="book-category-filter"><option value="">Todas las categorías</option></select><select id="book-status-filter"><option value="">Toda la colección</option><option value="available">Disponibles</option><option value="unavailable">Sin ejemplares</option></select><span class="result-count" id="book-count"></span></div><div id="books-grid" class="books-grid"></div></section>
+
+      <section id="view-usuarios" class="view"><div class="section-banner readers-banner"><div><span class="eyebrow">COMUNIDAD LECTORA</span><h2>Las personas detrás de cada historia.</h2><p>Consulta, registra y acompaña a los lectores de tu biblioteca.</p></div><button class="primary-button light" data-action="open-user">+ Registrar lector</button></div><div class="toolbar"><label class="inline-search">⌕ <input id="user-search" type="search" placeholder="Buscar por nombre, cédula o correo..."></label><span class="result-count" id="user-count"></span></div><div id="users-grid" class="users-grid"></div></section>
+
+      <section id="view-prestamos" class="view"><div class="section-banner loans-banner"><div><span class="eyebrow">CIRCULACIÓN DE LIBROS</span><h2>Cada préstamo es una puerta abierta.</h2><p>Supervisa entregas, devoluciones y fechas límite sin perder detalle.</p></div><button class="primary-button light" data-action="open-loan">+ Nuevo préstamo</button></div><div class="loan-summary" id="loan-summary"></div><div class="toolbar"><label class="inline-search">⌕ <input id="loan-search" type="search" placeholder="Buscar lector, título o código..."></label><select id="loan-status-filter"><option value="">Todos los estados</option><option value="ACTIVO">Activos</option><option value="ATRASADO">Atrasados</option><option value="DEVUELTO">Devueltos</option></select></div><article class="panel"><div id="loans-table"></div></article></section>
+
+      <section id="view-categorias" class="view"><div class="section-intro"><span class="eyebrow">ORGANIZA TU COLECCIÓN</span><h2>Categorías y autores</h2><p>Administra los géneros y las voces que dan identidad a tu biblioteca.</p></div><div class="organization-grid"><article class="panel"><div class="panel-heading"><div><span class="eyebrow">GÉNEROS Y ÁREAS</span><h3>Categorías</h3></div><button class="secondary-button" data-action="open-category">+ Agregar</button></div><div id="categories-list"></div></article><article class="panel"><div class="panel-heading"><div><span class="eyebrow">VOCES DE LA BIBLIOTECA</span><h3>Autores</h3></div><button class="secondary-button" data-action="open-author">+ Agregar</button></div><div id="authors-list"></div></article></div></section>
+
+      <section id="view-reportes" class="view"><div class="section-intro"><span class="eyebrow">INFORMACIÓN QUE CUENTA HISTORIAS</span><h2>Reportes y visualización</h2><p>Descubre qué está pasando en tu biblioteca con indicadores calculados a partir de tus registros reales.</p></div><div id="report-stats" class="stats-grid"></div><div class="dashboard-grid"><article class="panel"><div class="panel-heading"><div><span class="eyebrow">MOVIMIENTO MENSUAL</span><h3>Préstamos y devoluciones</h3></div></div><div id="report-activity-chart" class="chart-container"></div></article><article class="panel"><div class="panel-heading"><div><span class="eyebrow">INVENTARIO REAL</span><h3>Disponibilidad de ejemplares</h3></div></div><div id="availability-chart" class="donut-container"></div></article></div><article class="panel"><div class="panel-heading"><div><span class="eyebrow">TÍTULOS CON MAYOR MOVIMIENTO</span><h3>Libros más solicitados</h3></div><button class="secondary-button" id="export-report">↓ Exportar CSV</button></div><div id="popular-books"></div></article></section>
+
+      <section id="view-bitacora" class="view"><div class="section-intro"><span class="eyebrow">TRAZABILIDAD DEL SISTEMA</span><h2>Bitácora de actividad</h2><p>Consulta los movimientos y operaciones registrados en tu biblioteca.</p></div><article class="panel"><div id="activity-log"></div></article></section>
+    </main>
+  </div>
+
+  <div id="modal-backdrop" class="modal-backdrop hidden"><section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="modal-header"><div><span class="eyebrow" id="modal-eyebrow">BIBLIOSYSTEM</span><h2 id="modal-title"></h2></div><button class="icon-button" id="close-modal" aria-label="Cerrar">×</button></div><form id="modal-form" enctype="multipart/form-data"><div id="modal-fields" class="form-grid"></div><div class="form-actions"><button type="button" class="secondary-button" id="cancel-modal">Cancelar</button><button type="submit" class="primary-button" id="submit-modal">Guardar</button></div></form></section></div>
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+  <script src="../../js/app.js"></script>
+</body>
+</html>
