@@ -814,6 +814,13 @@ a {
   margin-bottom: 23px;
 }
 
+.stats-grid-user {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(210px, 1fr));
+  gap: 17px;
+  margin-bottom: 23px;
+}
+
 .stat-card {
   position: relative;
 
