@@ -29,6 +29,20 @@ CREATE TABLE IF NOT EXISTS usuarios (
     fecha_registro TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS cuentas (
+    id_cuenta INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_usuario INTEGER NOT NULL UNIQUE,
+    password_hash TEXT,
+    rol TEXT NOT NULL DEFAULT 'USUARIO' CHECK (rol IN ('ADMIN', 'USUARIO')),
+    estado_cuenta TEXT NOT NULL DEFAULT 'PENDIENTE' CHECK (estado_cuenta IN ('PENDIENTE', 'ACTIVADA')),
+    token_activacion TEXT,
+    fecha_activacion TEXT,
+    fecha_creacion TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_usuario)
+        REFERENCES usuarios (id_usuario)
+        ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS libros (
     id_libro INTEGER PRIMARY KEY AUTOINCREMENT,
     codigo TEXT NOT NULL UNIQUE,
@@ -74,6 +88,8 @@ CREATE TABLE IF NOT EXISTS bitacora (
 CREATE INDEX IF NOT EXISTS idx_libros_titulo ON libros (titulo);
 CREATE INDEX IF NOT EXISTS idx_usuarios_cedula ON usuarios (cedula);
 CREATE INDEX IF NOT EXISTS idx_prestamos_estado ON prestamos (estado);
+CREATE INDEX IF NOT EXISTS idx_cuentas_estado ON cuentas (estado_cuenta);
+CREATE INDEX IF NOT EXISTS idx_cuentas_rol ON cuentas (rol);
 
 INSERT INTO categorias (nombre, descripcion) VALUES
     ('Novela', 'Narrativa contemporánea y grandes historias de ficción'),
@@ -112,3 +128,27 @@ INSERT INTO autores (nombre, nacionalidad, fecha_nacimiento) VALUES
     ('David Thomas', 'Británica', NULL),
     ('Stuart Russell', 'Británica', '1962-01-01'),
     ('Peter Norvig', 'Estadounidense', '1956-12-14');
+
+INSERT INTO usuarios (cedula,nombres,apellidos,correo,telefono,direccion,estado) VALUES
+    ('0999999991','Juan Carlos','Rodriguez Perez','admin@bibliosystem.com',NULL,NULL,'ACTIVO'),
+    ('0999999992','Administrador','Secundario','admin2@bibliosystem.com',NULL,NULL,'ACTIVO');
+
+-- admin123
+-- admin1234
+
+INSERT INTO cuentas (id_usuario,password_hash,rol,estado_cuenta)
+SELECT
+    id_usuario,
+    CASE
+        WHEN correo = 'admin@bibliosystem.com'
+            THEN '$2y$10$Syc2N6Pk0PcYYlrlRphM.uGuc8WujmMhBW8MtF0wSXBsISAwLY6YC'
+        WHEN correo = 'admin2@bibliosystem.com'
+            THEN '$2y$10$BfQ1iNxowDUYqvxEVFg/Zuq6VVWac6AZgIMDSw5VTvZm0y1xj5uZC'
+    END,
+    'ADMIN',
+    'ACTIVADA'
+FROM usuarios
+WHERE correo IN (
+    'admin@bibliosystem.com',
+    'admin2@bibliosystem.com'
+);
