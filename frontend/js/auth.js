@@ -329,14 +329,14 @@ document.addEventListener('DOMContentLoaded', () => {
         ) {
 
           window.location.href =
-            '../pages/admin/dashboard.html';
+            '../pages/admin/dashboard.php';
 
         } else if (
           rol === 'USUARIO'
         ) {
 
           window.location.href =
-            '../pages/user/dashboard.html';
+            '../pages/user/dashboard.php';
 
         } else {
 
