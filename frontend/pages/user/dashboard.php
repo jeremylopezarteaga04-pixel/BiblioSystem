@@ -49,7 +49,7 @@ $usuario = $_SESSION['usuario'];
 
       <section id="view-dashboard" class="view active">
         <section class="hero-card"><div><span class="hero-kicker">TU BIBLIOTECA, EN UN SOLO LUGAR</span><h2>Historias que se prestan,<br>conocimiento que se comparte.</h2><p>Administra tu colección, acompaña a tus lectores y descubre cómo se mueve tu biblioteca.</p><button class="hero-button" data-action="open-loan">Registrar un préstamo →</button></div><div class="hero-art" aria-hidden="true"><span class="hero-book book-one">1984</span><span class="hero-book book-two">Cien años<br>de soledad</span><span class="hero-book book-three">Clean<br>Code</span></div></section>
-        <div id="dashboard-stats" class="stats-grid"></div>
+        <div id="dashboard-stats" class="stats-grid-user"></div>
         <div class="dashboard-grid"><article class="panel"><div class="panel-heading"><div><span class="eyebrow">ÚLTIMOS SEIS MESES</span><h3>Actividad de préstamos</h3></div><span class="panel-badge">Tiempo real</span></div><div id="activity-chart" class="chart-container"></div></article><article class="panel"><div class="panel-heading"><div><span class="eyebrow">DISTRIBUCIÓN</span><h3>Libros por categoría</h3></div></div><div id="category-chart" class="donut-container"></div></article></div>
         <article class="panel"><div class="panel-heading"><div><span class="eyebrow">MOVIMIENTOS RECIENTES</span><h3>Últimos préstamos</h3></div><a class="text-link" href="#prestamos">Ver todos →</a></div><div id="recent-loans"></div></article>
       </section>
