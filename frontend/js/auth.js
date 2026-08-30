@@ -453,7 +453,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       event.preventDefault();
 
-      window.location.href = 'forgot-password.html';
+      window.location.href = 'forgot-password.php';
 
     });
 
