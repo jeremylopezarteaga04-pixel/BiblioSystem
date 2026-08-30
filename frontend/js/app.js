@@ -23,7 +23,7 @@ function cargarPerfilUsuario() {
   const datosUsuario = sessionStorage.getItem('bibliosystem_usuario');
 
   if (!datosUsuario) {
-    window.location.replace('../../pages/login.html');
+    window.location.replace('../../pages/login.php');
     return;
   }
 
@@ -75,7 +75,7 @@ function cargarPerfilUsuario() {
     );
 
     sessionStorage.removeItem('bibliosystem_usuario');
-    window.location.replace('../../pages/login.html');
+    window.location.replace('../../pages/login.php');
   }
 }
 
@@ -476,7 +476,7 @@ window.addEventListener('pageshow', () => {
 
   if (!datosUsuario) {
 
-    window.location.replace('../../pages/login.html');
+    window.location.replace('../../pages/login.php');
 
   }
 
