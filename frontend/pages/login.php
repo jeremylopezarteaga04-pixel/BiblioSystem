@@ -170,7 +170,7 @@
               </label>
 
               <a
-                href="forgot-password.html"
+                href="forgot-password.php"
                 id="forgot-password"
                 class="auth-link"
               >
