@@ -21,5 +21,5 @@ if (ini_get('session.use_cookies')) {
 
 session_destroy();
 
-header('Location: ../frontend/pages/login.html');
+header('Location: ../frontend/pages/login.php');
 exit;
