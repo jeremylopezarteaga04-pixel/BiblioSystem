@@ -45,8 +45,8 @@ python3 -c "import sqlite3,pathlib; c=sqlite3.connect('database/bibliosystem.sql
 
 | Rol | Correo | Contraseña |
 | --- | --- | --- |
-| Administrador | admin@bibliosystem.com | _(completar)_ |
-| Administrador | admin2@bibliosystem.com | _(completar)_ |
+| Administrador | admin@bibliosystem.com | admin123 |
+| Administrador | admin2@bibliosystem.com | admin1234 |
 
 También se puede crear una cuenta nueva desde la pantalla de registro (`frontend/pages/register.php`), que queda con rol `USUARIO` por defecto.
 
